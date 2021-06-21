@@ -23,7 +23,7 @@ public interface RouteBuilder<REQUEST, RESPONSE> {
 
     RouteBuilder<REQUEST, RESPONSE> add(String prefix, Consumer<RouteBuilder<REQUEST, RESPONSE>> routerFn);
 
-    RouteBuilder<REQUEST, RESPONSE> add(String method, String path, RoutingHandler<REQUEST, RESPONSE> handler);
+    RouteBuilder<REQUEST, RESPONSE> add(Method method, String path, RoutingHandler<REQUEST, RESPONSE> handler);
 
     Routable<REQUEST, RESPONSE> notFound(RoutingHandler<REQUEST, RESPONSE> handler);
 

@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.toMap;
 
 public class Route<REQUEST, RESPONSE> {
 
-    public final String method;
+    public final Method method;
     public final String path;
     public final RoutingHandler<REQUEST, RESPONSE> handler;
     public final RoutingHandler<REQUEST, RESPONSE> fallbackHandler;
@@ -17,13 +17,13 @@ public class Route<REQUEST, RESPONSE> {
 
     private final List<PathElement> pathElements;
 
-    public Route(String method,
+    public Route(Method method,
                  String path,
                  RoutingHandler<REQUEST, RESPONSE> handler) {
         this(method, path, handler, null, null);
     }
 
-    public Route(String method,
+    public Route(Method method,
                  String path,
                  RoutingHandler<REQUEST, RESPONSE> handler,
                  RoutingHandler<REQUEST, RESPONSE> fallbackHandler,
@@ -49,7 +49,7 @@ public class Route<REQUEST, RESPONSE> {
                 .filter(it -> !it.isBlank())
                 .collect(toList());
 
-        if (!method.equals(offeredMethod)) {
+        if (!method.name().equalsIgnoreCase(offeredMethod)) {
             return Optional.empty();
         }
 

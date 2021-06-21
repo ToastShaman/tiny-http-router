@@ -20,7 +20,7 @@ public class MatchContext implements RouterContext {
 
     @Override
     public String required(String name) {
-        return optional(name).orElseThrow(() -> new IllegalArgumentException(format("%%s not found%s", name)));
+        return optional(name).orElseThrow(() -> new IllegalArgumentException(format("%s not found in context", name)));
     }
 
     @Override

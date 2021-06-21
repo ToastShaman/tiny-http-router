@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.github.toastshaman.httprouter.MatchContext.empty;
+import static com.github.toastshaman.httprouter.Method.*;
 import static java.lang.String.format;
 
 public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
@@ -26,51 +27,51 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
 
     @Override
     public Router<REQUEST, RESPONSE> GET(String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        return add("GET", path, handler);
+        return add(GET, path, handler);
     }
 
     @Override
     public Router<REQUEST, RESPONSE> HEAD(String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        return add("HEAD", path, handler);
+        return add(HEAD, path, handler);
     }
 
     @Override
     public Router<REQUEST, RESPONSE> POST(String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        return add("POST", path, handler);
+        return add(POST, path, handler);
     }
 
     @Override
     public Router<REQUEST, RESPONSE> PUT(String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        return add("PUT", path, handler);
+        return add(PUT, path, handler);
     }
 
     @Override
     public Router<REQUEST, RESPONSE> DELETE(String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        return add("DELETE", path, handler);
+        return add(DELETE, path, handler);
     }
 
     @Override
     public Router<REQUEST, RESPONSE> CONNECT(String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        return add("CONNECT", path, handler);
+        return add(CONNECT, path, handler);
     }
 
     @Override
     public Router<REQUEST, RESPONSE> OPTIONS(String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        return add("OPTIONS", path, handler);
+        return add(OPTIONS, path, handler);
     }
 
     @Override
     public Router<REQUEST, RESPONSE> TRACE(String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        return add("TRACE", path, handler);
+        return add(TRACE, path, handler);
     }
 
     @Override
     public Router<REQUEST, RESPONSE> PATCH(String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        return add("PATCH", path, handler);
+        return add(PATCH, path, handler);
     }
 
     @Override
-    public Router<REQUEST, RESPONSE> add(String method, String path, RoutingHandler<REQUEST, RESPONSE> handler) {
+    public Router<REQUEST, RESPONSE> add(Method method, String path, RoutingHandler<REQUEST, RESPONSE> handler) {
         return add(new Route<>(method, path, handler));
     }
 
@@ -78,13 +79,20 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
     public Router<REQUEST, RESPONSE> add(String prefix, Consumer<RouteBuilder<REQUEST, RESPONSE>> routerFn) {
         Router<REQUEST, RESPONSE> subRouter = new Router<>(methodFn, pathFn);
         routerFn.accept(subRouter);
-        subRouter.getRoutes().forEach(r -> add(new Route<>(
+
+        List<Route<REQUEST, RESPONSE>> routes = subRouter.getRoutes();
+        if (routes.isEmpty()) {
+            throw new IllegalArgumentException(format("no routes added for prefix: %s", prefix));
+        }
+
+        routes.forEach(r -> add(new Route<>(
                 r.method,
                 prefix + r.path,
                 r.handler,
                 subRouter.fallbackHandler,
                 subRouter.exceptionHandler
         )));
+
         return this;
     }
 
