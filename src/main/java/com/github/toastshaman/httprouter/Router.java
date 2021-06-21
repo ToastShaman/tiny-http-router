@@ -85,13 +85,7 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
             throw new IllegalArgumentException(format("no routes added for prefix: %s", prefix));
         }
 
-        routes.forEach(r -> add(new Route<>(
-                r.method,
-                prefix + r.path,
-                r.handler,
-                subRouter.fallbackHandler,
-                subRouter.exceptionHandler
-        )));
+        routes.forEach(r -> add(new Route<>(r.method, prefix + r.path, r.handler)));
 
         return this;
     }
@@ -130,35 +124,24 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
         String method = methodFn.apply(request);
         String path = pathFn.apply(request);
 
-        Optional<MatchResult<REQUEST, RESPONSE>> matchedRoute = routes.stream()
+        return routes.stream()
                 .map(it -> it.matches(method, path))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .findFirst();
-
-        RoutingHandler<REQUEST, RESPONSE> fallback = matchedRoute
-                .map(it -> it.route.fallbackHandler)
-                .orElse(fallbackHandler);
-
-        ExceptionHandler<REQUEST, RESPONSE> exception = matchedRoute
-                .map(it -> it.route.exceptionHandler)
-                .orElse(exceptionHandler);
-
-        Optional<RESPONSE> response = matchedRoute.map(it -> {
-            try {
-                return it.route.handler.handle(request, it.context);
-            } catch (Exception e) {
-                return Optional.ofNullable(exception).map(h -> h.handle(request, e)).orElse(null);
-            }
-        }).or(() -> {
-            try {
-                return Optional.ofNullable(fallback).map(h -> h.handle(request, empty()));
-            } catch (Exception e) {
-                return Optional.ofNullable(exception).map(h -> h.handle(request, e));
-            }
-        });
-
-        return response.orElseThrow(() -> new IllegalStateException(format("Failed to route request: %s", request)));
+                .findFirst()
+                .map(it -> {
+                    try {
+                        return it.route.handler.handle(request, it.context);
+                    } catch (Exception e) {
+                        return Optional.ofNullable(exceptionHandler).map(h -> h.handle(request, e)).orElse(null);
+                    }
+                }).or(() -> {
+                    try {
+                        return Optional.ofNullable(fallbackHandler).map(h -> h.handle(request, empty()));
+                    } catch (Exception e) {
+                        return Optional.ofNullable(exceptionHandler).map(h -> h.handle(request, e));
+                    }
+                }).orElseThrow(() -> new IllegalStateException(format("Failed to route request: %s", request)));
     }
 
     private Router<REQUEST, RESPONSE> add(Route<REQUEST, RESPONSE> route) {

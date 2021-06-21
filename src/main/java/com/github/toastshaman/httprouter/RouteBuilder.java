@@ -25,7 +25,4 @@ public interface RouteBuilder<REQUEST, RESPONSE> {
 
     RouteBuilder<REQUEST, RESPONSE> add(Method method, String path, RoutingHandler<REQUEST, RESPONSE> handler);
 
-    Routable<REQUEST, RESPONSE> notFound(RoutingHandler<REQUEST, RESPONSE> handler);
-
-    Routable<REQUEST, RESPONSE> exceptionally(ExceptionHandler<REQUEST, RESPONSE> handler);
 }

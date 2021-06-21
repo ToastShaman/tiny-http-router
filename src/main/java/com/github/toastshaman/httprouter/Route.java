@@ -12,22 +12,12 @@ public class Route<REQUEST, RESPONSE> {
     public final Method method;
     public final String path;
     public final RoutingHandler<REQUEST, RESPONSE> handler;
-    public final RoutingHandler<REQUEST, RESPONSE> fallbackHandler;
-    public final ExceptionHandler<REQUEST, RESPONSE> exceptionHandler;
 
     private final List<PathElement> pathElements;
 
     public Route(Method method,
                  String path,
                  RoutingHandler<REQUEST, RESPONSE> handler) {
-        this(method, path, handler, null, null);
-    }
-
-    public Route(Method method,
-                 String path,
-                 RoutingHandler<REQUEST, RESPONSE> handler,
-                 RoutingHandler<REQUEST, RESPONSE> fallbackHandler,
-                 ExceptionHandler<REQUEST, RESPONSE> exceptionHandler) {
         if (!path.startsWith("/")) {
             throw new IllegalArgumentException(format("%s path must start with /", path));
         }
@@ -40,8 +30,6 @@ public class Route<REQUEST, RESPONSE> {
         this.handler = Objects.requireNonNull(handler, "handler not provided");
         this.path = Objects.requireNonNull(path, "path not provided");
         this.pathElements = PathElementFactory.parse(path);
-        this.fallbackHandler = fallbackHandler;
-        this.exceptionHandler = exceptionHandler;
     }
 
     public Optional<MatchResult<REQUEST, RESPONSE>> matches(String offeredMethod, String offeredPath) {
@@ -83,14 +71,12 @@ public class Route<REQUEST, RESPONSE> {
         return Objects.equals(method, route.method)
                 && Objects.equals(path, route.path)
                 && Objects.equals(handler, route.handler)
-                && Objects.equals(fallbackHandler, route.fallbackHandler)
-                && Objects.equals(exceptionHandler, route.exceptionHandler)
                 && Objects.equals(pathElements, route.pathElements);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(method, path, handler, fallbackHandler, exceptionHandler, pathElements);
+        return Objects.hash(method, path, handler, pathElements);
     }
 
     @Override

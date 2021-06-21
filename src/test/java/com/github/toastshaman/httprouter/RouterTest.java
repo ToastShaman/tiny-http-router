@@ -1,6 +1,5 @@
 package com.github.toastshaman.httprouter;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -109,34 +108,6 @@ class RouterTest {
                 ).handle(MyRequest.GET("/items/123456"));
 
         assertThat(response).isEqualTo(MyResponse.OK());
-    }
-
-    @Test
-    void uses_exception_handling_from_sub_routes() {
-        MyResponse response = newRouter()
-                .add("/hello", r -> r
-                        .GET("/world", (req, ctx) -> {
-                            throw new IllegalArgumentException("from sub-routes");
-                        })
-                        .exceptionally((req, error) -> MyResponse.OK())
-                )
-                .exceptionally((req, error) -> MyResponse.NOT_FOUND())
-                .handle(MyRequest.GET("/hello/world"));
-
-        assertThat(response).isEqualTo(MyResponse.OK());
-    }
-
-    @Test
-    @Disabled("currently the fallback handler is ignored for sub-routes")
-    void uses_fallback_handling_from_sub_routes() {
-        MyResponse response = newRouter()
-                .add("/hello", r -> r
-                        .GET("/world", (req, ctx) -> MyResponse.OK())
-                        .notFound((req, error) -> MyResponse.NOT_FOUND()))
-                .notFound((req, error) -> MyResponse.INTERNAL_SERVER_ERROR())
-                .handle(MyRequest.GET("/hello/does-not-exist"));
-
-        assertThat(response).isEqualTo(MyResponse.NOT_FOUND());
     }
 
     private Router<MyRequest, MyResponse> newRouter() {
