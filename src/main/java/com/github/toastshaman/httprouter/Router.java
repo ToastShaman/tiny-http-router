@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.github.toastshaman.httprouter.MatchContext.empty;
+import static java.lang.String.format;
 
 public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
     private final LinkedList<Route<REQUEST, RESPONSE>> routes = new LinkedList<>();
@@ -70,15 +71,20 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
 
     @Override
     public Router<REQUEST, RESPONSE> add(String method, String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        routes.addLast(new Route<>(method, path, handler));
-        return this;
+        return add(new Route<>(method, path, handler));
     }
 
     @Override
     public Router<REQUEST, RESPONSE> add(String prefix, Consumer<RouteBuilder<REQUEST, RESPONSE>> routerFn) {
         Router<REQUEST, RESPONSE> subRouter = new Router<>(methodFn, pathFn);
         routerFn.accept(subRouter);
-        subRouter.getRoutes().forEach(r -> add(r.method, prefix + r.path, r.handler));
+        subRouter.getRoutes().forEach(r -> add(new Route<>(
+                r.method,
+                prefix + r.path,
+                r.handler,
+                subRouter.fallbackHandler,
+                subRouter.exceptionHandler
+        )));
         return this;
     }
 
@@ -100,29 +106,55 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
     }
 
     @Override
+    public RoutingHandler<REQUEST, RESPONSE> getFallbackHandler() {
+        return fallbackHandler;
+    }
+
+    @Override
+    public ExceptionHandler<REQUEST, RESPONSE> getExceptionHandler() {
+        return exceptionHandler;
+    }
+
+    @Override
     public RESPONSE handle(REQUEST request) {
         Objects.requireNonNull(request, "request not provided");
 
         String method = methodFn.apply(request);
         String path = pathFn.apply(request);
 
-        return routes.stream()
+        Optional<MatchResult<REQUEST, RESPONSE>> matchedRoute = routes.stream()
                 .map(it -> it.matches(method, path))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .findFirst()
-                .map(it -> {
-                    try {
-                        return it.node.handler.handle(request, it.context);
-                    } catch (Exception e) {
-                        return Optional.ofNullable(exceptionHandler).map(h -> h.handle(request, e)).orElse(null);
-                    }
-                }).or(() -> {
-                    try {
-                        return Optional.ofNullable(fallbackHandler).map(h -> h.handle(request, empty()));
-                    } catch (Exception e) {
-                        return Optional.ofNullable(exceptionHandler).map(h -> h.handle(request, e));
-                    }
-                }).orElse(null);
+                .findFirst();
+
+        RoutingHandler<REQUEST, RESPONSE> fallback = matchedRoute
+                .map(it -> it.node.fallbackHandler)
+                .orElse(fallbackHandler);
+
+        ExceptionHandler<REQUEST, RESPONSE> exception = matchedRoute
+                .map(it -> it.node.exceptionHandler)
+                .orElse(exceptionHandler);
+
+        Optional<RESPONSE> response = matchedRoute.map(it -> {
+            try {
+                return it.node.handler.handle(request, it.context);
+            } catch (Exception e) {
+                return Optional.ofNullable(exception).map(h -> h.handle(request, e)).orElse(null);
+            }
+        }).or(() -> {
+            try {
+                return Optional.ofNullable(fallback).map(h -> h.handle(request, empty()));
+            } catch (Exception e) {
+                return Optional.ofNullable(exception).map(h -> h.handle(request, e));
+            }
+        });
+
+        return response.orElseThrow(() -> new IllegalStateException(format("Failed to route request: %s", request)));
+    }
+
+    private Router<REQUEST, RESPONSE> add(Route<REQUEST, RESPONSE> route) {
+        routes.addLast(route);
+        return this;
     }
 }

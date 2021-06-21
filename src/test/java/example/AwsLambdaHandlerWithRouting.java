@@ -21,7 +21,7 @@ class AwsLambdaHandlerWithRouting {
                     it -> it.getRequestContext().getHttp().getMethod(),
                     it -> it.getRequestContext().getHttp().getPath())
                     .GET("/hello/{name}", (req, ctx) -> {
-                        String name = ctx.require("name");
+                        String name = ctx.required("name");
                         return APIGatewayV2HTTPResponse.builder()
                                 .withStatusCode(200)
                                 .withHeaders(Map.of("Content-Type", "application/json"))
@@ -31,7 +31,7 @@ class AwsLambdaHandlerWithRouting {
                     })
                     .add("/items", r -> {
                         r.GET("/{ID:[0-9]{4}", (req, ctx) -> {
-                            int id = Integer.parseInt(ctx.require("ID"));
+                            int id = Integer.parseInt(ctx.required("ID"));
                             return APIGatewayV2HTTPResponse.builder()
                                     .withStatusCode(200)
                                     .withHeaders(Map.of("Content-Type", "application/json"))
