@@ -129,16 +129,16 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
                 .findFirst();
 
         RoutingHandler<REQUEST, RESPONSE> fallback = matchedRoute
-                .map(it -> it.node.fallbackHandler)
+                .map(it -> it.route.fallbackHandler)
                 .orElse(fallbackHandler);
 
         ExceptionHandler<REQUEST, RESPONSE> exception = matchedRoute
-                .map(it -> it.node.exceptionHandler)
+                .map(it -> it.route.exceptionHandler)
                 .orElse(exceptionHandler);
 
         Optional<RESPONSE> response = matchedRoute.map(it -> {
             try {
-                return it.node.handler.handle(request, it.context);
+                return it.route.handler.handle(request, it.context);
             } catch (Exception e) {
                 return Optional.ofNullable(exception).map(h -> h.handle(request, e)).orElse(null);
             }
