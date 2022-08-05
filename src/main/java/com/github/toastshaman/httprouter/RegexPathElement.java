@@ -27,9 +27,9 @@ public class RegexPathElement implements PathElement {
 
     public static RegexPathElement parseOrNull(String offeredElement) {
         if (offeredElement.startsWith("{") && offeredElement.endsWith("}") && offeredElement.contains(":")) {
-            List<String> nameAndRegex = Arrays.asList(offeredElement.substring(1, offeredElement.length() - 1).split(":"));
-            String name = nameAndRegex.get(0);
-            Pattern regex = Pattern.compile(nameAndRegex.get(1));
+            var nameAndRegex = Arrays.asList(offeredElement.substring(1, offeredElement.length() - 1).split(":"));
+            var name = nameAndRegex.get(0);
+            var regex = Pattern.compile(nameAndRegex.get(1));
             return new RegexPathElement(name, regex);
         }
         return null;

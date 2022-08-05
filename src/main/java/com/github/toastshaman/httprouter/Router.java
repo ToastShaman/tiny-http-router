@@ -77,10 +77,10 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
 
     @Override
     public Router<REQUEST, RESPONSE> add(String prefix, Consumer<RouteBuilder<REQUEST, RESPONSE>> routerFn) {
-        Router<REQUEST, RESPONSE> subRouter = new Router<>(methodFn, pathFn);
+        var subRouter = new Router<REQUEST, RESPONSE>(methodFn, pathFn);
         routerFn.accept(subRouter);
 
-        List<Route<REQUEST, RESPONSE>> routes = subRouter.getRoutes();
+        var routes = subRouter.getRoutes();
         if (routes.isEmpty()) {
             throw new IllegalArgumentException(format("no routes added for prefix: %s", prefix));
         }
@@ -121,8 +121,8 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
     public RESPONSE handle(REQUEST request) {
         Objects.requireNonNull(request, "request not provided");
 
-        String method = methodFn.apply(request);
-        String path = pathFn.apply(request);
+        var method = methodFn.apply(request);
+        var path = pathFn.apply(request);
 
         return routes.stream()
                 .map(it -> it.matches(method, path))

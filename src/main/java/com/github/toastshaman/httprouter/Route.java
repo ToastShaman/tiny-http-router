@@ -3,7 +3,6 @@ package com.github.toastshaman.httprouter;
 import java.util.*;
 import java.util.stream.IntStream;
 
-import static java.lang.String.format;
 import static java.util.stream.Collectors.toMap;
 
 public class Route<REQUEST, RESPONSE> {
@@ -18,11 +17,11 @@ public class Route<REQUEST, RESPONSE> {
                  String path,
                  RoutingHandler<REQUEST, RESPONSE> handler) {
         if (!path.startsWith("/")) {
-            throw new IllegalArgumentException(format("%s path must start with /", path));
+            throw new IllegalArgumentException("%s path must start with /".formatted(path));
         }
 
         if (path.endsWith("/")) {
-            throw new IllegalArgumentException(format("%s path must not end with /", path));
+            throw new IllegalArgumentException("%s path must not end with /".formatted(path));
         }
 
         this.method = Objects.requireNonNull(method, "method not provided");
@@ -32,7 +31,7 @@ public class Route<REQUEST, RESPONSE> {
     }
 
     public Optional<MatchResult<REQUEST, RESPONSE>> matches(String offeredMethod, String offeredPath) {
-        List<String> elements = Arrays.stream(offeredPath.split("/"))
+        var elements = Arrays.stream(offeredPath.split("/"))
                 .filter(it -> !it.isBlank())
                 .toList();
 
@@ -44,14 +43,14 @@ public class Route<REQUEST, RESPONSE> {
             return Optional.empty();
         }
 
-        List<MatchContext> matches = IntStream.range(0, pathElements.size())
+        var matches = IntStream.range(0, pathElements.size())
                 .mapToObj(i -> pathElements.get(i).matchesOrNull(elements.get(i)))
                 .toList();
 
-        boolean allMatch = matches.stream().allMatch(Objects::nonNull);
+        var allMatch = matches.stream().allMatch(Objects::nonNull);
 
         if (allMatch) {
-            Map<String, String> combined = matches.stream()
+            var combined = matches.stream()
                     .map(it -> it.context)
                     .flatMap(it -> it.entrySet().stream())
                     .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));

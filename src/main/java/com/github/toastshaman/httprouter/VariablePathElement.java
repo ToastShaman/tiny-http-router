@@ -18,7 +18,7 @@ public class VariablePathElement implements PathElement {
 
     public static VariablePathElement parseOrNull(String offeredElement) {
         if (offeredElement.startsWith("{") && offeredElement.endsWith("}") && !offeredElement.contains(":")) {
-            String name = offeredElement.substring(1, offeredElement.length() - 1);
+            var name = offeredElement.substring(1, offeredElement.length() - 1);
             return new VariablePathElement(name);
         }
         return null;
