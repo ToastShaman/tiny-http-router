@@ -1,6 +1,5 @@
 package com.github.toastshaman.httprouter;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,7 +26,7 @@ public class RegexPathElement implements PathElement {
 
     public static RegexPathElement parseOrNull(String offeredElement) {
         if (offeredElement.startsWith("{") && offeredElement.endsWith("}") && offeredElement.contains(":")) {
-            var nameAndRegex = Arrays.asList(offeredElement.substring(1, offeredElement.length() - 1).split(":"));
+            var nameAndRegex = List.of(offeredElement.substring(1, offeredElement.length() - 1).split(":"));
             var name = nameAndRegex.get(0);
             var regex = Pattern.compile(nameAndRegex.get(1));
             return new RegexPathElement(name, regex);
