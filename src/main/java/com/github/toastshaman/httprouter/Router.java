@@ -9,7 +9,6 @@ import java.util.function.Function;
 
 import static com.github.toastshaman.httprouter.MatchContext.empty;
 import static com.github.toastshaman.httprouter.Method.*;
-import static java.lang.String.format;
 
 public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
     private final LinkedList<Route<REQUEST, RESPONSE>> routes = new LinkedList<>();
@@ -82,10 +81,10 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
 
         var routes = subRouter.getRoutes();
         if (routes.isEmpty()) {
-            throw new IllegalArgumentException(format("no routes added for prefix: %s", prefix));
+            throw new IllegalArgumentException("no routes added for prefix: %s".formatted(prefix));
         }
 
-        routes.forEach(r -> add(new Route<>(r.method, prefix + r.path, r.handler)));
+        routes.forEach(r -> add(new Route<>(r.method, "%s%s".formatted(prefix, r.path), r.handler)));
 
         return this;
     }
@@ -141,7 +140,7 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
                     } catch (Exception e) {
                         return Optional.ofNullable(exceptionHandler).map(h -> h.handle(request, e));
                     }
-                }).orElseThrow(() -> new IllegalStateException(format("Failed to route request: %s", request)));
+                }).orElseThrow(() -> new IllegalStateException("Failed to route request: %s".formatted(request)));
     }
 
     private Router<REQUEST, RESPONSE> add(Route<REQUEST, RESPONSE> route) {

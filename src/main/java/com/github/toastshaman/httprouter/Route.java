@@ -31,13 +31,13 @@ public class Route<REQUEST, RESPONSE> {
     }
 
     public Optional<MatchResult<REQUEST, RESPONSE>> matches(String offeredMethod, String offeredPath) {
-        var elements = Arrays.stream(offeredPath.split("/"))
-                .filter(it -> !it.isBlank())
-                .toList();
-
         if (!method.name().equalsIgnoreCase(offeredMethod)) {
             return Optional.empty();
         }
+
+        var elements = Arrays.stream(offeredPath.split("/"))
+                .filter(it -> !it.isBlank())
+                .toList();
 
         if (pathElements.size() != elements.size()) {
             return Optional.empty();

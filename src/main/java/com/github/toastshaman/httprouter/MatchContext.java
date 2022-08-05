@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 
 public class MatchContext implements RouterContext {
@@ -20,7 +19,7 @@ public class MatchContext implements RouterContext {
 
     @Override
     public String required(String name) {
-        return optional(name).orElseThrow(() -> new IllegalArgumentException(format("%s not found in context", name)));
+        return optional(name).orElseThrow(() -> new IllegalArgumentException("%s not found in context".formatted(name)));
     }
 
     @Override
