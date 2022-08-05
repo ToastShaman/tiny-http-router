@@ -1,6 +1,6 @@
 # tiny-http-router
 
-Tiny Java 11 (no-dependencies) HTTP router library.
+Tiny (no-dependencies) HTTP router library.
 
 Example usage with AWS Lambda.
 
