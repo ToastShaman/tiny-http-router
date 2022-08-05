@@ -38,3 +38,5 @@ hs_err_pid*
 # Covers JetBrains IDEs
 .idea
 *.iml
+
+.DS_Store
