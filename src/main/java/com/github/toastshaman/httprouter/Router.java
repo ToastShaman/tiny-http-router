@@ -131,7 +131,7 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
                 .findFirst()
                 .map(it -> {
                     try {
-                        return it.route.handler.handle(request, it.context);
+                        return it.route().handler.handle(request, it.context());
                     } catch (Exception e) {
                         return Optional.ofNullable(exceptionHandler).map(h -> h.handle(request, e)).orElse(null);
                     }

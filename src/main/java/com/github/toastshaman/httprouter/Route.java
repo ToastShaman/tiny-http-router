@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 import static java.lang.String.format;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 public class Route<REQUEST, RESPONSE> {
@@ -35,7 +34,7 @@ public class Route<REQUEST, RESPONSE> {
     public Optional<MatchResult<REQUEST, RESPONSE>> matches(String offeredMethod, String offeredPath) {
         List<String> elements = Arrays.stream(offeredPath.split("/"))
                 .filter(it -> !it.isBlank())
-                .collect(toList());
+                .toList();
 
         if (!method.name().equalsIgnoreCase(offeredMethod)) {
             return Optional.empty();
@@ -47,7 +46,7 @@ public class Route<REQUEST, RESPONSE> {
 
         List<MatchContext> matches = IntStream.range(0, pathElements.size())
                 .mapToObj(i -> pathElements.get(i).matchesOrNull(elements.get(i)))
-                .collect(toList());
+                .toList();
 
         boolean allMatch = matches.stream().allMatch(Objects::nonNull);
 
