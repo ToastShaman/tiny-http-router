@@ -32,7 +32,7 @@ class RouterTest {
                 .GET("/HELLO", (r, ctx) -> MyResponse.OK())
                 .handle(MyRequest.GET("/hello")))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Failed to route request: MyRequest{method=GET, path='/hello'}");
+                .hasMessage("Failed to route request: MyRequest[method=GET, path=/hello]");
     }
 
     @Test
@@ -112,8 +112,8 @@ class RouterTest {
 
     private Router<MyRequest, MyResponse> newRouter() {
         return new Router<>(
-                it -> it.method.name().toLowerCase(),
-                it -> it.path
+                it -> it.method().name().toLowerCase(),
+                MyRequest::path
         );
     }
 }
