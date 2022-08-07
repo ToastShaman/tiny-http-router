@@ -1,4 +1,7 @@
-package com.github.toastshaman.httprouter;
+package com.github.toastshaman.httprouter.domain;
+
+import com.github.toastshaman.httprouter.PathElement;
+import com.github.toastshaman.httprouter.RouterContext;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +20,7 @@ public class RegexPathElement implements PathElement {
     }
 
     @Override
-    public MatchContext matchesOrNull(String offeredElement) {
+    public RouterContext matchesOrNull(String offeredElement) {
         if (pattern.test(offeredElement)) {
             return new MatchContext(Map.of(name, offeredElement));
         }

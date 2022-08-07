@@ -1,4 +1,7 @@
-package com.github.toastshaman.httprouter;
+package com.github.toastshaman.httprouter.domain;
+
+import com.github.toastshaman.httprouter.PathElement;
+import com.github.toastshaman.httprouter.RouterContext;
 
 import java.util.Objects;
 
@@ -11,7 +14,7 @@ public class StaticPathElement implements PathElement {
     }
 
     @Override
-    public MatchContext matchesOrNull(String offeredElement) {
+    public RouterContext matchesOrNull(String offeredElement) {
         if (offeredElement.equals(element)) {
             return new MatchContext();
         }

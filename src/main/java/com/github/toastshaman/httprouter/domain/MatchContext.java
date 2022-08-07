@@ -1,4 +1,6 @@
-package com.github.toastshaman.httprouter;
+package com.github.toastshaman.httprouter.domain;
+
+import com.github.toastshaman.httprouter.RouterContext;
 
 import java.util.Map;
 import java.util.Objects;
@@ -25,6 +27,11 @@ public class MatchContext implements RouterContext {
     @Override
     public Optional<String> optional(String name) {
         return Optional.ofNullable(context.get(name)).filter(it -> !it.isBlank());
+    }
+
+    @Override
+    public Map<String, String> toMap() {
+        return Map.copyOf(context);
     }
 
     public static MatchContext empty() {

@@ -1,6 +1,6 @@
-package com.github.toastshaman.httprouter;
+package com.github.toastshaman.httprouter.domain;
 
-import com.github.toastshaman.httprouter.domain.Path;
+import com.github.toastshaman.httprouter.*;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -62,7 +62,7 @@ public class SimpleRoute<REQUEST, RESPONSE> implements Route<REQUEST, RESPONSE> 
 
         if (allMatch) {
             var combined = matches.stream()
-                    .map(it -> it.context)
+                    .map(RouterContext::toMap)
                     .flatMap(it -> it.entrySet().stream())
                     .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
 

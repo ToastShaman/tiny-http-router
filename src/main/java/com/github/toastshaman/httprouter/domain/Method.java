@@ -1,4 +1,4 @@
-package com.github.toastshaman.httprouter;
+package com.github.toastshaman.httprouter.domain;
 
 public enum Method {
     GET,

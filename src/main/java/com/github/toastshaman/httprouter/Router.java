@@ -1,6 +1,8 @@
 package com.github.toastshaman.httprouter;
 
+import com.github.toastshaman.httprouter.domain.Method;
 import com.github.toastshaman.httprouter.domain.Path;
+import com.github.toastshaman.httprouter.domain.SimpleRouterFactory;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,8 +11,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static com.github.toastshaman.httprouter.MatchContext.empty;
-import static com.github.toastshaman.httprouter.Method.*;
+import static com.github.toastshaman.httprouter.domain.MatchContext.empty;
+import static com.github.toastshaman.httprouter.domain.Method.*;
 
 public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
     private final LinkedList<Route<REQUEST, RESPONSE>> routes = new LinkedList<>();
@@ -24,7 +26,7 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
 
     public Router(Function<REQUEST, String> methodFn,
                   Function<REQUEST, String> pathFn) {
-        this(methodFn, pathFn, RouterFactory.defaultFactory());
+        this(methodFn, pathFn, new SimpleRouterFactory<>());
     }
 
     public Router(Function<REQUEST, String> methodFn,

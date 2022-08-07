@@ -1,10 +1,13 @@
-package com.github.toastshaman.httprouter;
+package com.github.toastshaman.httprouter.domain;
+
+import com.github.toastshaman.httprouter.Route;
+import com.github.toastshaman.httprouter.RouterContext;
 
 import java.util.Objects;
 
 public record MatchResult<REQUEST, RESPONSE>(
         Route<REQUEST, RESPONSE> route,
-        MatchContext context
+        RouterContext context
 ) {
 
     public MatchResult {

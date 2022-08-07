@@ -1,5 +1,7 @@
 package com.github.toastshaman.httprouter;
 
+import com.github.toastshaman.httprouter.domain.MatchResult;
+import com.github.toastshaman.httprouter.domain.Method;
 import com.github.toastshaman.httprouter.domain.Path;
 
 import java.util.Optional;

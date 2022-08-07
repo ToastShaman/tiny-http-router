@@ -1,5 +1,7 @@
 package com.github.toastshaman.httprouter;
 
+import com.github.toastshaman.httprouter.domain.Method;
+
 import java.util.function.Consumer;
 
 public interface RouteBuilder<REQUEST, RESPONSE> {

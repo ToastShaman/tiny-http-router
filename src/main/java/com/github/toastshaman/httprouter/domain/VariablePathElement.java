@@ -1,4 +1,7 @@
-package com.github.toastshaman.httprouter;
+package com.github.toastshaman.httprouter.domain;
+
+import com.github.toastshaman.httprouter.PathElement;
+import com.github.toastshaman.httprouter.RouterContext;
 
 import java.util.Map;
 import java.util.Objects;
@@ -12,7 +15,7 @@ public class VariablePathElement implements PathElement {
     }
 
     @Override
-    public MatchContext matchesOrNull(String offeredElement) {
+    public RouterContext matchesOrNull(String offeredElement) {
         return new MatchContext(Map.of(name, offeredElement));
     }
 
