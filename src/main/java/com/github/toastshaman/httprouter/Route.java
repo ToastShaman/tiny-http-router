@@ -18,10 +18,18 @@ public class Route<REQUEST, RESPONSE> {
     public Route(Method method,
                  Path path,
                  RoutingHandler<REQUEST, RESPONSE> handler) {
+        this(method, path, handler, PathElementFactory.create());
+    }
+
+    public Route(Method method,
+                 Path path,
+                 RoutingHandler<REQUEST, RESPONSE> handler,
+                 PathElementFactory pathElementFactory) {
+        Objects.requireNonNull(pathElementFactory);
         this.method = Objects.requireNonNull(method, "method not provided");
         this.handler = Objects.requireNonNull(handler, "handler not provided");
         this.path = Objects.requireNonNull(path, "path not provided");
-        this.pathElements = PathElementFactory.parse(path);
+        this.pathElements = path.normalize().map(pathElementFactory::eval);
     }
 
     public Optional<MatchResult<REQUEST, RESPONSE>> matches(String offeredMethod, String offeredPath) {

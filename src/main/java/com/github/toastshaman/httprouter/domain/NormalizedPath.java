@@ -3,6 +3,7 @@ package com.github.toastshaman.httprouter.domain;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -18,9 +19,10 @@ public class NormalizedPath {
                 .collect(joining("/", "/", ""));
     }
 
-    public List<String> split() {
+    public <T> List<T> map(Function<String, T> fn) {
         return Arrays.stream(value.split("/"))
                 .filter(it -> !it.isBlank())
+                .map(fn)
                 .collect(toList());
     }
 
