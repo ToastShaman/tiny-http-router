@@ -1,5 +1,7 @@
 package com.github.toastshaman.httprouter;
 
+import com.github.toastshaman.httprouter.domain.Path;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +73,7 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
 
     @Override
     public Router<REQUEST, RESPONSE> add(Method method, String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        return add(new Route<>(method, path, handler));
+        return add(new Route<>(method, Path.of(path), handler));
     }
 
     @Override
@@ -84,7 +86,7 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
             throw new IllegalArgumentException("no routes added for prefix: %s".formatted(prefix));
         }
 
-        routes.forEach(r -> add(new Route<>(r.method, "%s%s".formatted(prefix, r.path), r.handler)));
+        routes.forEach(r -> add(new Route<>(r.method, r.path.prefix(prefix), r.handler)));
 
         return this;
     }

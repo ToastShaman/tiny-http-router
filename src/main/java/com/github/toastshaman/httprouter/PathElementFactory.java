@@ -1,12 +1,12 @@
 package com.github.toastshaman.httprouter;
 
-import java.util.Arrays;
+import com.github.toastshaman.httprouter.domain.Path;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 public class PathElementFactory {
@@ -14,11 +14,12 @@ public class PathElementFactory {
     private PathElementFactory() {
     }
 
-    public static List<PathElement> parse(String path) {
+    public static List<PathElement> parse(Path path) {
         Objects.requireNonNull(path, "path not provided");
 
-        return Arrays.stream(normalizePath(path).split("/"))
-                .filter(it -> !it.isBlank())
+        return path.normalize()
+                .split()
+                .stream()
                 .map(PathElementFactory::eval)
                 .collect(toList());
     }
@@ -34,11 +35,5 @@ public class PathElementFactory {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(new StaticPathElement(element));
-    }
-
-    private static String normalizePath(String path) {
-        return Arrays.stream(path.split("/"))
-                .filter(it -> !it.isBlank())
-                .collect(joining("/", "/", ""));
     }
 }

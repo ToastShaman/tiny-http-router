@@ -1,5 +1,7 @@
 package com.github.toastshaman.httprouter;
 
+import com.github.toastshaman.httprouter.domain.Path;
+
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -8,22 +10,14 @@ import static java.util.stream.Collectors.toMap;
 public class Route<REQUEST, RESPONSE> {
 
     public final Method method;
-    public final String path;
+    public final Path path;
     public final RoutingHandler<REQUEST, RESPONSE> handler;
 
     private final List<PathElement> pathElements;
 
     public Route(Method method,
-                 String path,
+                 Path path,
                  RoutingHandler<REQUEST, RESPONSE> handler) {
-        if (!path.startsWith("/")) {
-            throw new IllegalArgumentException("%s path must start with /".formatted(path));
-        }
-
-        if (path.endsWith("/")) {
-            throw new IllegalArgumentException("%s path must not end with /".formatted(path));
-        }
-
         this.method = Objects.requireNonNull(method, "method not provided");
         this.handler = Objects.requireNonNull(handler, "handler not provided");
         this.path = Objects.requireNonNull(path, "path not provided");
