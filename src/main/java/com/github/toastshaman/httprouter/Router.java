@@ -138,8 +138,7 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
 
         return routes.stream()
                 .map(it -> it.matches(method, path))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .flatMap(Optional::stream)
                 .findFirst()
                 .map(it -> {
                     try {
