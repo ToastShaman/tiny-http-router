@@ -17,13 +17,22 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
 
     private final Function<REQUEST, String> methodFn;
     private final Function<REQUEST, String> pathFn;
+    private final PathElementFactory pathElementFactory;
 
     private RoutingHandler<REQUEST, RESPONSE> fallbackHandler = null;
     private ExceptionHandler<REQUEST, RESPONSE> exceptionHandler = null;
 
-    public Router(Function<REQUEST, String> methodFn, Function<REQUEST, String> pathFn) {
+    public Router(Function<REQUEST, String> methodFn,
+                  Function<REQUEST, String> pathFn) {
+        this(methodFn, pathFn, PathElementFactory.create());
+    }
+
+    public Router(Function<REQUEST, String> methodFn,
+                  Function<REQUEST, String> pathFn,
+                  PathElementFactory pathElementFactory) {
         this.methodFn = Objects.requireNonNull(methodFn, "no mapping function provided for method");
         this.pathFn = Objects.requireNonNull(pathFn, "no mapping function provided for path");
+        this.pathElementFactory = Objects.requireNonNull(pathElementFactory);
     }
 
     @Override
@@ -73,7 +82,7 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
 
     @Override
     public Router<REQUEST, RESPONSE> add(Method method, String path, RoutingHandler<REQUEST, RESPONSE> handler) {
-        return add(new Route<>(method, Path.of(path), handler));
+        return add(new Route<>(method, Path.of(path), handler, pathElementFactory));
     }
 
     @Override
@@ -86,7 +95,7 @@ public class Router<REQUEST, RESPONSE> implements Routable<REQUEST, RESPONSE> {
             throw new IllegalArgumentException("no routes added for prefix: %s".formatted(prefix));
         }
 
-        routes.forEach(r -> add(new Route<>(r.method, r.path.prefix(prefix), r.handler)));
+        routes.forEach(r -> add(new Route<>(r.method, r.path.prefix(prefix), r.handler, pathElementFactory)));
 
         return this;
     }

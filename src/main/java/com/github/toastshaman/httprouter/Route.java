@@ -17,12 +17,6 @@ public class Route<REQUEST, RESPONSE> {
 
     public Route(Method method,
                  Path path,
-                 RoutingHandler<REQUEST, RESPONSE> handler) {
-        this(method, path, handler, PathElementFactory.create());
-    }
-
-    public Route(Method method,
-                 Path path,
                  RoutingHandler<REQUEST, RESPONSE> handler,
                  PathElementFactory pathElementFactory) {
         Objects.requireNonNull(pathElementFactory);
