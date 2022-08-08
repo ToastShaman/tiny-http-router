@@ -5,8 +5,6 @@ import com.github.toastshaman.httprouter.domain.MapHeaders;
 import com.github.toastshaman.httprouter.domain.MapRoutingContext;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 class MuxTest {
 
     @Test
