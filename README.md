@@ -5,8 +5,6 @@ Tiny (no-dependencies) HTTP router library.
 Example usage with AWS Lambda.
 
 ```java
-package com.github.toastshaman.httprouter.example;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2HTTPEvent;
@@ -16,8 +14,6 @@ import com.github.toastshaman.httprouter.domain.MapHeaders;
 import com.github.toastshaman.httprouter.domain.MapRoutingContext;
 import com.google.gson.Gson;
 
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Objects;
@@ -36,6 +32,18 @@ public class MyLambda implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewa
                 var name = r.context().require("name");
                 w.write(gson.toJson(Map.of("message", "hello %s".formatted(name))));
                 w.writeHeader(200);
+            })
+            .Post("/hello/{name}/create", (w, r) -> {
+                var name = r.context().require("name");
+                var body = r.body();
+                w.write(gson.toJson(Map.of("message", "accepted")));
+                w.writeHeader(201);
+            }).Route("/world", s -> {
+                s.Patch("/{id:[0-9]+}", (w, r) -> {
+                    var id = r.context().require("id");
+                    w.write(gson.toJson(Map.of("message", "accepted %s".formatted(id))));
+                    w.writeHeader(201);
+                });
             });
 
     @Override
@@ -71,8 +79,8 @@ public class MyLambda implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewa
         }
 
         @Override
-        public Reader reader() {
-            return new StringReader(input.getBody());
+        public String body() {
+            return input.getBody();
         }
     }
 

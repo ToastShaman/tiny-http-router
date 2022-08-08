@@ -9,5 +9,5 @@ public interface Request {
 
     RoutingContext context();
 
-    Reader reader();
+    String body();
 }

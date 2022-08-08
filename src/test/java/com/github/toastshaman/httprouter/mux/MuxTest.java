@@ -1,15 +1,9 @@
 package com.github.toastshaman.httprouter.mux;
 
 import com.github.toastshaman.httprouter.*;
-import com.github.toastshaman.httprouter.RoutingContext;
-import com.github.toastshaman.httprouter.Header;
-import com.github.toastshaman.httprouter.Request;
-import com.github.toastshaman.httprouter.ResponseWriter;
-import com.github.toastshaman.httprouter.domain.MapRoutingContext;
 import com.github.toastshaman.httprouter.domain.MapHeaders;
+import com.github.toastshaman.httprouter.domain.MapRoutingContext;
 import org.junit.jupiter.api.Test;
-
-import java.io.Reader;
 
 class MuxTest {
 
@@ -83,8 +77,8 @@ class MuxTest {
         }
 
         @Override
-        public Reader reader() {
-            return Reader.nullReader();
+        public String body() {
+            return null;
         }
     }
 
