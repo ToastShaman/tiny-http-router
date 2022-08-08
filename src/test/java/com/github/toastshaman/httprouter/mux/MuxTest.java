@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.Map;
+import java.util.function.Function;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -125,7 +126,7 @@ class MuxTest {
                         w.header().set("X-Routed", "true");
                         next.handle(w, r);
                     });
-                    s.Get("/world", (w,r) -> {
+                    s.Get("/world", (w, r) -> {
                         w.write("Hello World");
                         w.writeHeader(418);
                     });
@@ -150,7 +151,7 @@ class MuxTest {
                     w.header().set("Content-Type", "application/json");
                     next.handle(w, r);
                 })
-                .NotFound((w,r) -> w.writeHeader(418))
+                .NotFound((w, r) -> w.writeHeader(418))
                 .Get("/a", (w, r) -> w.writeHeader(200));
 
         var responseWriter = new MyResponseWriter();
@@ -179,5 +180,60 @@ class MuxTest {
             w.write(new Gson().toJson(Map.of("message", message)));
             w.writeHeader(200);
         };
+    }
+
+    @Test
+    void middleware_can_abort_early() {
+        var router = Router.newRouter()
+                .Use(next -> (w, r) -> {
+                    w.header().set("Content-Type", "application/json");
+                    next.handle(w, r);
+                })
+                .Use(next -> (w, r) -> {
+                    if (r.method().equals("GET")) {
+                        w.writeHeader(500);
+                        return;
+                    }
+                    next.handle(w, r);
+                })
+                .Get("/a", (w, r) -> w.writeHeader(200));
+
+        var responseWriter = new MyResponseWriter();
+        router.handle(responseWriter, MyRequest.Get("/a"));
+
+        assertThat(responseWriter.statusCode).isEqualTo(500);
+        assertThat(responseWriter.headers.toMap())
+                .containsEntry("Content-Type", "application/json");
+    }
+
+    @Test
+    void middleware_can_handle_exceptions() {
+        Function<Handler, Handler> errorMiddleware = next -> (w, r) -> {
+            try {
+                next.handle(w, r);
+            } catch (Exception e) {
+                w.write(new Gson().toJson(Map.of("error", e.getMessage())));
+                w.writeHeader(500);
+            }
+        };
+
+        var router = Router.newRouter()
+                .Use(errorMiddleware)
+                .Use(next -> (w, r) -> {
+                    w.header().set("Content-Type", "application/json");
+                    next.handle(w, r);
+                })
+                .Get("/a", (w, r) -> {
+                    throw new IllegalArgumentException("Something went wrong");
+                });
+
+        var responseWriter = new MyResponseWriter();
+        router.handle(responseWriter, MyRequest.Get("/a"));
+
+        assertThat(responseWriter.statusCode).isEqualTo(500);
+        assertThat(responseWriter.headers.toMap())
+                .containsEntry("Content-Type", "application/json");
+        assertThat(responseWriter.body).isEqualTo("""
+                        {"error":"Something went wrong"}""");
     }
 }
