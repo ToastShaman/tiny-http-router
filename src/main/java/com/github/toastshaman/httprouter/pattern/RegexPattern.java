@@ -26,7 +26,7 @@ public record RegexPattern(String name, Pattern pattern) implements PatternEleme
     }
 
     public static RegexPattern parseOrNull(String element) {
-        var matcher = Pattern.compile("\\{([a-zA-Z0-9]+):([^}].+)}").matcher(element);
+        var matcher = Pattern.compile("^\\{([a-zA-Z0-9]+):([^}].+)}$").matcher(element);
         if (matcher.find()) {
             var name = matcher.group(1);
             var regex = matcher.group(2);

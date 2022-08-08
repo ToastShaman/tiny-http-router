@@ -18,7 +18,7 @@ public record StaticPattern(String value) implements PatternElement {
     }
 
     public static StaticPattern parseOrNull(String element) {
-        if (element.matches("[a-zA-Z0-9]+")) {
+        if (element.matches("^[a-zA-Z0-9]+$")) {
             return new StaticPattern(element);
         }
         return null;
