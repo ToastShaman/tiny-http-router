@@ -2,9 +2,12 @@ package com.github.toastshaman.httprouter.mux;
 
 import com.github.toastshaman.httprouter.*;
 import com.github.toastshaman.httprouter.domain.MethodType;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+
+import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -154,5 +157,27 @@ class MuxTest {
         router.handle(responseWriter, MyRequest.Get("/hello/world"));
 
         assertThat(responseWriter.statusCode).isEqualTo(418);
+    }
+
+    @Test
+    void can_use_method_to_create_handler() {
+        var router = Router.newRouter()
+                .Get("/hello", createHandler("Hello"));
+
+        var responseWriter = new MyResponseWriter();
+        router.handle(responseWriter, MyRequest.Get("/hello"));
+
+        assertThat(responseWriter.statusCode).isEqualTo(200);
+        assertThat(responseWriter.body).isEqualTo("""
+                {"message":"Hello"}""");
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private Handler createHandler(String message) {
+        return (w, r) -> {
+            w.header().set("Content-Type", "application/json");
+            w.write(new Gson().toJson(Map.of("message", message)));
+            w.writeHeader(200);
+        };
     }
 }
