@@ -28,13 +28,22 @@ public sealed interface MatchResult permits Matched, MethodNotAllowed, NoMatch {
         return new MatchResultComparator();
     }
 
-    record Matched(Route route, Integer ordinal) implements MatchResult {
+    record Matched(
+            Route route,
+            Integer ordinal
+    ) implements MatchResult {
     }
 
-    record NoMatch(Route route, Integer ordinal) implements MatchResult {
+    record NoMatch(
+            Route route,
+            Integer ordinal
+    ) implements MatchResult {
     }
 
-    record MethodNotAllowed(Route route, Integer ordinal) implements MatchResult {
+    record MethodNotAllowed(
+            Route route,
+            Integer ordinal
+    ) implements MatchResult {
     }
 
     class MatchResultComparator implements Comparator<MatchResult> {
