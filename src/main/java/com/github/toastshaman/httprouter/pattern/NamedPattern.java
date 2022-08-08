@@ -20,8 +20,10 @@ public record NamedPattern(String name) implements PatternElement {
         return true;
     }
 
+    public static final Pattern PATTERN = Pattern.compile("^\\{([a-zA-Z0-9]+)}$");
+
     public static NamedPattern parseOrNull(String element) {
-        var matcher = Pattern.compile("^\\{([a-zA-Z0-9]+)}$").matcher(element);
+        var matcher = PATTERN.matcher(element);
         if (matcher.find()) {
             var name = matcher.group(0);
             return new NamedPattern(name);

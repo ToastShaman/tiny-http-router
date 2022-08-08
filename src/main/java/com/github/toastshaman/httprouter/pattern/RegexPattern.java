@@ -25,8 +25,10 @@ public record RegexPattern(String name, Pattern pattern) implements PatternEleme
         return false;
     }
 
+    public static final Pattern PATTERN = Pattern.compile("^\\{([a-zA-Z0-9]+):([^}].+)}$");
+
     public static RegexPattern parseOrNull(String element) {
-        var matcher = Pattern.compile("^\\{([a-zA-Z0-9]+):([^}].+)}$").matcher(element);
+        var matcher = PATTERN.matcher(element);
         if (matcher.find()) {
             var name = matcher.group(1);
             var regex = matcher.group(2);
