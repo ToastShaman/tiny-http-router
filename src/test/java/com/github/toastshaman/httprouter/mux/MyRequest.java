@@ -23,7 +23,7 @@ record MyRequest(
     }
 
     public static MyRequest Post(String path, String body) {
-        return new MyRequest("GET", path, body, new MapRoutingContext());
+        return new MyRequest("POST", path, body, new MapRoutingContext());
     }
 
     @Override

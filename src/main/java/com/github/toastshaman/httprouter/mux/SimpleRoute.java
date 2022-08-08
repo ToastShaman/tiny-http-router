@@ -3,6 +3,7 @@ package com.github.toastshaman.httprouter.mux;
 import com.github.toastshaman.httprouter.Handler;
 import com.github.toastshaman.httprouter.Route;
 import com.github.toastshaman.httprouter.RoutingContext;
+import com.github.toastshaman.httprouter.domain.MatchResult;
 import com.github.toastshaman.httprouter.domain.MethodType;
 import com.github.toastshaman.httprouter.domain.Path;
 import com.github.toastshaman.httprouter.domain.Pattern;
@@ -10,6 +11,8 @@ import com.github.toastshaman.httprouter.pattern.PatternElements;
 import com.github.toastshaman.httprouter.pattern.PatternElementsFactory;
 
 import java.util.Objects;
+
+import static com.github.toastshaman.httprouter.domain.MatchResult.*;
 
 public final class SimpleRoute implements Route {
     private final MethodType method;
@@ -28,9 +31,9 @@ public final class SimpleRoute implements Route {
     }
 
     @Override
-    public boolean match(RoutingContext context, MethodType offeredMethod, Path offeredPath) {
-        if (!offeredMethod.equals(method)) return false;
-        return patterns.match(context, offeredPath);
+    public MatchResult match(RoutingContext context, MethodType offeredMethod, Path offeredPath) {
+        if (!offeredMethod.equals(method)) return MethodNotAllowed(this);
+        return patterns.match(context, offeredPath) ? Matched(this) : NoMatch();
     }
 
     public SimpleRoute prefixWith(Pattern pattern) {

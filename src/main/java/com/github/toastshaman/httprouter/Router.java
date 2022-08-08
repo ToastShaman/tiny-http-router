@@ -34,4 +34,6 @@ public interface Router extends Handler {
     Router Route(String pattern, Consumer<Router> router);
 
     Router NotFound(Handler handler);
+
+    Router MethodNotAllowed(Handler handler);
 }

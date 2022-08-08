@@ -1,14 +1,20 @@
 package com.github.toastshaman.httprouter.mux;
 
 import com.github.toastshaman.httprouter.*;
-import com.github.toastshaman.httprouter.domain.*;
+import com.github.toastshaman.httprouter.domain.MatchResult;
+import com.github.toastshaman.httprouter.domain.MatchResult.MethodNotAllowed;
+import com.github.toastshaman.httprouter.domain.MatchResult.NoMatch;
+import com.github.toastshaman.httprouter.domain.MethodType;
+import com.github.toastshaman.httprouter.domain.Path;
+import com.github.toastshaman.httprouter.domain.Pattern;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static com.github.toastshaman.httprouter.domain.MatchResult.NoMatch;
 import static com.github.toastshaman.httprouter.domain.MethodType.*;
 
 public class Mux implements Router {
@@ -25,8 +31,15 @@ public class Mux implements Router {
     }
 
     private Handler notFoundHandler = (w, r) -> {
+        w.header().set("Content-Type", "text/plain");
         w.write("Not Found");
         w.writeHeader(404);
+    };
+
+    private Handler methodNotAllowedHandler = (w, r) -> {
+        w.header().set("Content-Type", "text/plain");
+        w.write("Method Not Allowed");
+        w.writeHeader(405);
     };
 
     @Override
@@ -107,7 +120,13 @@ public class Mux implements Router {
 
     @Override
     public Router NotFound(Handler handler) {
-        this.notFoundHandler = handler;
+        this.notFoundHandler = Objects.requireNonNull(handler);
+        return this;
+    }
+
+    @Override
+    public Router MethodNotAllowed(Handler handler) {
+        this.methodNotAllowedHandler = Objects.requireNonNull(handler);
         return this;
     }
 
@@ -117,9 +136,16 @@ public class Mux implements Router {
         var path = Path.from(request);
         var ctx = request.context();
 
-        var endpoint = findRoute(ctx, method, path)
-                .map(Route::handler)
-                .orElse(notFoundHandler);
+        var matchResult = findRoute(ctx, method, path);
+
+        Handler endpoint;
+        if (matchResult instanceof NoMatch) {
+            endpoint = notFoundHandler;
+        } else if (matchResult instanceof MethodNotAllowed) {
+            endpoint = methodNotAllowedHandler;
+        } else {
+            endpoint = matchResult.route().handler();
+        }
 
         endpoint.handle(responseWriter, request);
     }
@@ -142,7 +168,9 @@ public class Mux implements Router {
         return handler;
     }
 
-    private Optional<Route> findRoute(RoutingContext context, MethodType methodType, Path path) {
-        return routes.stream().filter(it -> it.match(context, methodType, path)).findFirst();
+    private MatchResult findRoute(RoutingContext context, MethodType methodType, Path path) {
+        return routes.stream().map(it -> it.match(context, methodType, path))
+                .max(MatchResult.Comparator())
+                .orElse(NoMatch());
     }
 }

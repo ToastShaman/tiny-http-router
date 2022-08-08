@@ -161,6 +161,36 @@ class MuxTest {
     }
 
     @Test
+    void can_override_method_not_allowed_handler() {
+        var router = Router.newRouter()
+                .Use(next -> (w, r) -> {
+                    w.header().set("Content-Type", "application/json");
+                    next.handle(w, r);
+                })
+                .MethodNotAllowed((w, r) -> w.writeHeader(418))
+                .Get("/a", (w, r) -> w.writeHeader(200))
+                .Post("/a/b/c", (w, r) -> w.writeHeader(201))
+                ;
+
+        var responseWriter = new MyResponseWriter();
+        router.handle(responseWriter, MyRequest.Post("/a", ""));
+
+        assertThat(responseWriter.statusCode).isEqualTo(418);
+    }
+
+    @Test
+    void picks_first_matching_route() {
+        var router = Router.newRouter()
+                .Get("/a", (w, r) -> w.writeHeader(418))
+                .Get("/a", (w, r) -> w.writeHeader(200));
+
+        var responseWriter = new MyResponseWriter();
+        router.handle(responseWriter, MyRequest.Get("/a"));
+
+        assertThat(responseWriter.statusCode).isEqualTo(418);
+    }
+
+    @Test
     void can_use_method_to_create_handler() {
         var router = Router.newRouter()
                 .Get("/hello", createHandler("Hello"));
