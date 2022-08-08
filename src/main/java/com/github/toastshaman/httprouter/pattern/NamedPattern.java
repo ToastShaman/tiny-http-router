@@ -25,7 +25,7 @@ public record NamedPattern(String name) implements PatternElement {
     public static NamedPattern parseOrNull(String element) {
         var matcher = PATTERN.matcher(element);
         if (matcher.find()) {
-            var name = matcher.group(0);
+            var name = matcher.group(1);
             return new NamedPattern(name);
         }
         return null;

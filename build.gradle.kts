@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     testImplementation(Testing.junit.jupiter.api)
+    testImplementation(Testing.junit.jupiter.params)
     testRuntimeOnly(Testing.junit.jupiter.engine)
 
     testImplementation("org.assertj:assertj-core:_")
