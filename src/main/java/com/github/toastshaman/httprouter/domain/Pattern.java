@@ -10,7 +10,7 @@ public record Pattern(String value) {
             throw new IllegalArgumentException("routing pattern must begin with '/' in '%s'".formatted(value));
         }
 
-        if (value.endsWith("/")) {
+        if (!value.equals("/") && value.endsWith("/")) {
             throw new IllegalArgumentException("routing pattern must not end with '/' in '%s'".formatted(value));
         }
     }
