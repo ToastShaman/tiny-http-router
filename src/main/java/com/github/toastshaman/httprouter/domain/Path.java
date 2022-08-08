@@ -1,34 +1,27 @@
 package com.github.toastshaman.httprouter.domain;
 
+import com.github.toastshaman.httprouter.Request;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public record Path(String value) {
 
     public Path {
-        Objects.requireNonNull(value);
-
-        if (value.isBlank()) {
-            throw new IllegalArgumentException("path must not be blank");
-        }
-
-        if (!value.startsWith("/")) {
-            throw new IllegalArgumentException("%s path must start with /".formatted(value));
-        }
-
-        if (value.endsWith("/")) {
-            throw new IllegalArgumentException("%s path must not end with /".formatted(value));
+        if (Objects.requireNonNull(value).isBlank()) {
+            throw new IllegalArgumentException("path must not be empty");
         }
     }
 
-    public Path prefix(String prefix) {
-        return Path.of("%s%s".formatted(prefix, value));
+    public List<PathElement> explode() {
+        return Arrays.stream(value.split("/"))
+                .filter(it -> !it.isBlank())
+                .map(PathElement::new)
+                .toList();
     }
 
-    public NormalizedPath normalize() {
-        return new NormalizedPath(this);
-    }
-
-    public static Path of(String path) {
-        return new Path(path);
+    public static Path from(Request request) {
+        return new Path(request.path());
     }
 }

@@ -1,17 +1,17 @@
 package com.github.toastshaman.httprouter;
 
-import com.github.toastshaman.httprouter.domain.MatchResult;
-import com.github.toastshaman.httprouter.domain.Method;
+import com.github.toastshaman.httprouter.domain.MethodType;
 import com.github.toastshaman.httprouter.domain.Path;
+import com.github.toastshaman.httprouter.domain.Pattern;
 
-import java.util.Optional;
+public interface Route {
 
-public interface Route<REQUEST, RESPONSE> {
+    MethodType method();
+    Pattern pattern();
 
-    Method method();
+    Handler handler();
 
-    Path path();
+    boolean match(RoutingContext Context, MethodType offeredMethod, Path offeredPath);
 
-    RoutingHandler<REQUEST, RESPONSE> handler();
-    Optional<MatchResult<REQUEST, RESPONSE>> matches(String offeredMethod, String offeredPath);
+    Route prefixWith(Pattern pattern);
 }
