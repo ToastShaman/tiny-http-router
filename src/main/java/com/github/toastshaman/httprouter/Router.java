@@ -11,7 +11,7 @@ public interface Router extends Handler {
         return new Mux();
     }
 
-    Router Use(Function<Handler,Handler> middleware);
+    Router Use(Function<Handler, Handler> middleware);
 
     Router Connect(String pattern, Handler handler);
 

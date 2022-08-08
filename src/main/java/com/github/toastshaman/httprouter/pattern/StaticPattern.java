@@ -12,6 +12,7 @@ public record StaticPattern(String value) implements PatternElement {
             throw new IllegalArgumentException("must not be empty");
         }
     }
+
     @Override
     public boolean match(RoutingContext context, PathElement path) {
         return value.equals(path.value());
