@@ -79,7 +79,7 @@ public class MyLambda implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewa
         }
 
         @Override
-        public Map<String, String> getQueryStringParameters() {
+        public Map<String, String> queryStringParameters() {
             return input.getQueryStringParameters();
         }
     }

@@ -27,7 +27,7 @@ record MyRequest(
     }
 
     @Override
-    public Map<String, String> getQueryStringParameters() {
+    public Map<String, String> queryStringParameters() {
         return Map.of();
     }
 }

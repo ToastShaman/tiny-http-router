@@ -9,7 +9,7 @@ public interface Request {
 
     String body();
 
-    Map<String, String> getQueryStringParameters();
+    Map<String, String> queryStringParameters();
 
     RoutingContext context();
 }
