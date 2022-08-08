@@ -82,6 +82,11 @@ public class MyLambda implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewa
         public String body() {
             return input.getBody();
         }
+
+        @Override
+        public Map<String, String> getQueryStringParameters() {
+            return input.getQueryStringParameters();
+        }
     }
 
     public static class ContextWrapper extends MapRoutingContext {

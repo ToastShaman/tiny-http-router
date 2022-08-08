@@ -5,6 +5,8 @@ import com.github.toastshaman.httprouter.RoutingContext;
 import com.github.toastshaman.httprouter.domain.MapRoutingContext;
 import com.github.toastshaman.httprouter.domain.MethodType;
 
+import java.util.Map;
+
 record MyRequest(
         String method,
         String path,
@@ -22,5 +24,10 @@ record MyRequest(
 
     public static MyRequest Post(String path, String body) {
         return new MyRequest("GET", path, body, new MapRoutingContext());
+    }
+
+    @Override
+    public Map<String, String> getQueryStringParameters() {
+        return Map.of();
     }
 }
