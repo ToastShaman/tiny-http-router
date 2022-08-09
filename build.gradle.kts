@@ -1,31 +1,32 @@
 plugins {
-    id("java")
+    `java-library`
 }
 
-group = "com.github.toastshaman"
-version = "1.0-SNAPSHOT"
+subprojects {
+    apply(plugin = "java-library")
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-    withSourcesJar()
-}
+    repositories {
+        mavenCentral()
+    }
 
-repositories {
-    mavenCentral()
-}
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        withSourcesJar()
+    }
 
-dependencies {
-    testImplementation(Testing.junit.jupiter.api)
-    testImplementation(Testing.junit.jupiter.params)
-    testRuntimeOnly(Testing.junit.jupiter.engine)
+    tasks.test {
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
 
-    testImplementation("org.assertj:assertj-core:_")
-    testImplementation("com.amazonaws:aws-lambda-java-events:_")
-    testImplementation("com.amazonaws:aws-lambda-java-core:_")
-    testImplementation("com.google.code.gson:gson:_")
-}
-
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
+    dependencies {
+        testImplementation(Testing.junit.jupiter.api)
+        testImplementation(Testing.junit.jupiter.params)
+        testRuntimeOnly(Testing.junit.jupiter.engine)
+        testImplementation(Testing.mockito.junitJupiter)
+        testImplementation("org.assertj:assertj-core:_")
+    }
 }

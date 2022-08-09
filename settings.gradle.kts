@@ -5,3 +5,6 @@ plugins {
 
 rootProject.name = "tiny-http-router"
 
+include("core")
+include("aws")
+include("servlet")
