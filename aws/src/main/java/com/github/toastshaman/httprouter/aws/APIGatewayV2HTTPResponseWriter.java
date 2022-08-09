@@ -13,9 +13,7 @@ public class APIGatewayV2HTTPResponseWriter implements ResponseWriter {
 
     private final MapHeaders headers = new MapHeaders();
     private final Encoding encoding;
-
     private String body;
-
     private int statusCode;
 
     public APIGatewayV2HTTPResponseWriter() {
