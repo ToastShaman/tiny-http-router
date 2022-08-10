@@ -278,4 +278,17 @@ class MuxTest {
 
         assertThat(responseWriter.statusCode).isEqualTo(418);
     }
+
+    @Test
+    void writes_default_status_code() {
+        var router = Router.newRouter()
+                .Get("/a", (w, r) -> {
+                    // do nothing
+                });
+
+        var responseWriter = new MyResponseWriter();
+        router.handle(responseWriter, MyRequest.Get("/a"));
+
+        assertThat(responseWriter.statusCode).isEqualTo(200);
+    }
 }

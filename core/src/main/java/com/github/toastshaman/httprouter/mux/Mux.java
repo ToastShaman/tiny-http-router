@@ -153,6 +153,7 @@ public class Mux implements Router {
             endpoint = matchResult.route().handler();
         }
 
+        responseWriter.writeHeader(200);
         endpoint.handle(responseWriter, request);
     }
 
