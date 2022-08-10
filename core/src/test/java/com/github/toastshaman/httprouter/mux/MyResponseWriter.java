@@ -4,7 +4,7 @@ import com.github.toastshaman.httprouter.Headers;
 import com.github.toastshaman.httprouter.ResponseWriter;
 import com.github.toastshaman.httprouter.domain.MapHeaders;
 
-class MyResponseWriter implements ResponseWriter {
+public class MyResponseWriter implements ResponseWriter {
     public final MapHeaders headers = new MapHeaders();
     public int statusCode = -1;
 

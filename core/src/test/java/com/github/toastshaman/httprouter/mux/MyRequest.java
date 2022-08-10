@@ -7,7 +7,7 @@ import com.github.toastshaman.httprouter.domain.MethodType;
 
 import java.util.Map;
 
-record MyRequest(
+public record MyRequest(
         String method,
         String path,
         String body,

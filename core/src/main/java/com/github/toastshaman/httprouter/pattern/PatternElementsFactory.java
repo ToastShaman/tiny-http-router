@@ -8,13 +8,13 @@ import java.util.function.Function;
 
 public class PatternElementsFactory {
 
-    private final List<Function<String, PatternElement>> factories = List.of(
+    private static final List<Function<String, PatternElement>> factories = List.of(
             StaticPattern::parseOrNull,
             NamedPattern::parseOrNull,
             RegexPattern::parseOrNull
     );
 
-    public PatternElements parse(Pattern pattern) {
+    public static PatternElements parse(Pattern pattern) {
         List<PatternElement> elements = pattern
                 .explode()
                 .stream()

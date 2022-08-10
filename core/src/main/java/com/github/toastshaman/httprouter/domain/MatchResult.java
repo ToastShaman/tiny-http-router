@@ -16,8 +16,8 @@ public sealed interface MatchResult permits Matched, MethodNotAllowed, NoMatch {
         return new Matched(route, 100);
     }
 
-    static MethodNotAllowed MethodNotAllowed(Route route) {
-        return new MethodNotAllowed(route, 0);
+    static MethodNotAllowed MethodNotAllowed() {
+        return new MethodNotAllowed(null, 0);
     }
 
     static NoMatch NoMatch() {

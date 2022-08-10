@@ -36,4 +36,17 @@ public record RegexPattern(String name, Pattern pattern) implements PatternEleme
         }
         return null;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RegexPattern that = (RegexPattern) o;
+        return Objects.equals(pattern.pattern(), that.pattern.pattern());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pattern.pattern());
+    }
 }

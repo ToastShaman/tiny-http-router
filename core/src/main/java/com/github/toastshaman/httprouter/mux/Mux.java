@@ -7,6 +7,7 @@ import com.github.toastshaman.httprouter.domain.MatchResult.NoMatch;
 import com.github.toastshaman.httprouter.domain.MethodType;
 import com.github.toastshaman.httprouter.domain.Path;
 import com.github.toastshaman.httprouter.domain.Pattern;
+import com.github.toastshaman.httprouter.routing.RoutingTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,19 +15,24 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static com.github.toastshaman.httprouter.domain.MatchResult.NoMatch;
 import static com.github.toastshaman.httprouter.domain.MethodType.*;
 
 public class Mux implements Router {
 
-    private final List<Route> routes = new ArrayList<>();
+    private final RoutingTable routingTable;
 
     private List<Function<Handler, Handler>> middlewares = new ArrayList<>();
 
     public Mux() {
+        this(new RoutingTree());
     }
 
-    private Mux(List<Function<Handler, Handler>> middlewares) {
+    public Mux(RoutingTable routingTable) {
+        this.routingTable = routingTable;
+    }
+
+    private Mux(RoutingTable routingTable, List<Function<Handler, Handler>> middlewares) {
+        this.routingTable = routingTable;
         this.middlewares = middlewares;
     }
 
@@ -106,14 +112,14 @@ public class Mux implements Router {
     public Router Route(String pattern, Consumer<Router> routerFn) {
         Pattern p = Pattern.of(pattern);
 
-        Mux mux = new Mux(middlewares);
+        Mux mux = new Mux(routingTable, middlewares);
         routerFn.accept(mux);
 
-        List<Route> routesWithPrefix = mux.routes.stream()
+        mux.routingTable.routes()
+                .stream()
                 .map(it -> it.prefixWith(p))
-                .toList();
-
-        routes.addAll(routesWithPrefix);
+                .toList()
+                .forEach(routingTable::insert);
 
         return this;
     }
@@ -151,7 +157,7 @@ public class Mux implements Router {
     }
 
     private void insertRoute(MethodType method, Pattern pattern, Handler handler) {
-        routes.add(new SimpleRoute(method, pattern, chain(handler)));
+        routingTable.insert(new SimpleRoute(method, pattern, chain(handler)));
     }
 
     // builds a Handler composed of a middleware stack and endpoint handler in the order they are passed.
@@ -169,8 +175,6 @@ public class Mux implements Router {
     }
 
     private MatchResult findRoute(RoutingContext context, MethodType methodType, Path path) {
-        return routes.stream().map(it -> it.match(context, methodType, path))
-                .max(MatchResult.Comparator())
-                .orElse(NoMatch());
+        return routingTable.find(context, methodType, path);
     }
 }
