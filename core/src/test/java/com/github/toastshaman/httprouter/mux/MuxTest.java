@@ -291,4 +291,24 @@ class MuxTest {
 
         assertThat(responseWriter.statusCode).isEqualTo(200);
     }
+
+    @Test
+    void matches_nested_path_elements() {
+        var router = Router.newRouter()
+                .Get("/a/{first}/b/{second}/c", (w, r) -> {
+                    var first = r.context().require("first");
+                    var second = r.context().require("second");
+                    w.header().set("first", first);
+                    w.header().set("second", second);
+                    w.writeHeader(418);
+                });
+
+        var responseWriter = new MyResponseWriter();
+        router.handle(responseWriter, MyRequest.Get("/a/foo/b/bar/c"));
+
+        assertThat(responseWriter.statusCode).isEqualTo(418);
+        assertThat(responseWriter.headers.toMap())
+                .containsEntry("first", "foo")
+                .containsEntry("second", "bar");
+    }
 }
