@@ -3,8 +3,8 @@ package com.github.toastshaman.httprouter.servlet;
 import com.github.toastshaman.httprouter.Request;
 import com.github.toastshaman.httprouter.RoutingContext;
 import com.github.toastshaman.httprouter.domain.MapRoutingContext;
+import jakarta.servlet.http.HttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +31,7 @@ public class HttpServletRequestWrapper implements Request {
 
     @Override
     public String path() {
-        return request.getServletPath();
+        return request.getRequestURI();
     }
 
     @Override

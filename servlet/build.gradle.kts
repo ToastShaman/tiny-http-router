@@ -1,6 +1,7 @@
 dependencies {
     implementation(project(":core"))
-    compileOnly("javax.servlet:javax.servlet-api:_")
+    compileOnly("jakarta.servlet:jakarta.servlet-api:_")
 
-    testImplementation("javax.servlet:javax.servlet-api:_")
+    testImplementation("org.eclipse.jetty:jetty-server:_")
+    testImplementation("jakarta.servlet:jakarta.servlet-api:_")
 }

@@ -1,10 +1,10 @@
 package com.github.toastshaman.httprouter.servlet;
 
 import com.github.toastshaman.httprouter.Router;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -18,7 +18,7 @@ class HttpServletRequestWrapperTest {
     void can_route_a_servlet_request() throws IOException {
         var input = mock(HttpServletRequest.class);
         when(input.getMethod()).thenReturn("GET");
-        when(input.getServletPath()).thenReturn("/a/b/c");
+        when(input.getRequestURI()).thenReturn("/a/b/c");
 
         var out = new StringWriter();
         var response = mock(HttpServletResponse.class);

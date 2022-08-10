@@ -3,8 +3,9 @@ package com.github.toastshaman.httprouter.servlet;
 import com.github.toastshaman.httprouter.Headers;
 import com.github.toastshaman.httprouter.ResponseWriter;
 import com.github.toastshaman.httprouter.domain.MapHeaders;
+import jakarta.servlet.http.HttpServletResponse;
 
-import javax.servlet.http.HttpServletResponse;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class HttpServletResponseWriter implements ResponseWriter {
 
@@ -36,9 +37,10 @@ public class HttpServletResponseWriter implements ResponseWriter {
         try {
             headers.toMap().forEach(response::setHeader);
             response.setStatus(statusCode);
+            response.setCharacterEncoding(UTF_8.name());
             response.getWriter().write(body);
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 }
