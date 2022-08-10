@@ -23,7 +23,7 @@ public class RoutingTreeBenchmark {
     @Setup(Level.Trial)
     public void initialize() {
         List.of(tree, simple).forEach(it -> {
-            for (int i = 0; i < 100_000; i++) {
+            for (int i = 0; i < 500_000; i++) {
                 it.Get("/a/b/c/%d".formatted(i), (w, r) -> w.writeHeader(200));
             }
             it.Get("/a/b/c/d/f/{id:[0-9]+}", (w, r) -> w.writeHeader(200));
