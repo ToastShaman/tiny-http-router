@@ -1,10 +1,8 @@
-package com.github.toastshaman.httprouter.domain;
-
-import com.github.toastshaman.httprouter.Route;
+package com.github.toastshaman.httprouter;
 
 import java.util.Comparator;
 
-import static com.github.toastshaman.httprouter.domain.MatchResult.*;
+import static com.github.toastshaman.httprouter.MatchResult.*;
 
 public sealed interface MatchResult permits Matched, MethodNotAllowed, NoMatch {
 

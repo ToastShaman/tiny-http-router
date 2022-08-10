@@ -3,7 +3,7 @@ package com.github.toastshaman.httprouter.routing;
 import com.github.toastshaman.httprouter.Route;
 import com.github.toastshaman.httprouter.RoutingContext;
 import com.github.toastshaman.httprouter.RoutingTable;
-import com.github.toastshaman.httprouter.domain.MatchResult;
+import com.github.toastshaman.httprouter.MatchResult;
 import com.github.toastshaman.httprouter.domain.MethodType;
 import com.github.toastshaman.httprouter.domain.Path;
 import com.github.toastshaman.httprouter.domain.Pattern;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static com.github.toastshaman.httprouter.domain.MatchResult.*;
+import static com.github.toastshaman.httprouter.MatchResult.*;
 
 public class SimpleRouting implements RoutingTable {
 

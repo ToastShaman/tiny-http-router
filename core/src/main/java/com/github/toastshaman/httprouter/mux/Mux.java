@@ -1,9 +1,9 @@
 package com.github.toastshaman.httprouter.mux;
 
 import com.github.toastshaman.httprouter.*;
-import com.github.toastshaman.httprouter.domain.MatchResult;
-import com.github.toastshaman.httprouter.domain.MatchResult.MethodNotAllowed;
-import com.github.toastshaman.httprouter.domain.MatchResult.NoMatch;
+import com.github.toastshaman.httprouter.MatchResult;
+import com.github.toastshaman.httprouter.MatchResult.MethodNotAllowed;
+import com.github.toastshaman.httprouter.MatchResult.NoMatch;
 import com.github.toastshaman.httprouter.domain.MethodType;
 import com.github.toastshaman.httprouter.domain.Path;
 import com.github.toastshaman.httprouter.domain.Pattern;

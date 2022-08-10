@@ -1,5 +1,6 @@
 package com.github.toastshaman.httprouter.routing;
 
+import com.github.toastshaman.httprouter.MatchResult;
 import com.github.toastshaman.httprouter.Route;
 import com.github.toastshaman.httprouter.RoutingContext;
 import com.github.toastshaman.httprouter.RoutingTable;
@@ -11,7 +12,7 @@ import com.github.toastshaman.httprouter.pattern.PatternElementsFactory;
 import java.util.*;
 import java.util.function.Function;
 
-import static com.github.toastshaman.httprouter.domain.MatchResult.*;
+import static com.github.toastshaman.httprouter.MatchResult.*;
 
 public class RoutingTree implements RoutingTable {
 
