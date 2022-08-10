@@ -266,4 +266,16 @@ class MuxTest {
         assertThat(responseWriter.body).isEqualTo("""
                         {"error":"Something went wrong"}""");
     }
+
+    @Test
+    void routing_is_case_sensitive() {
+        var router = Router.newRouter()
+                .Get("/a", (w, r) -> w.writeHeader(200))
+                .Get("/A", (w, r) -> w.writeHeader(418));
+
+        var responseWriter = new MyResponseWriter();
+        router.handle(responseWriter, MyRequest.Get("/A"));
+
+        assertThat(responseWriter.statusCode).isEqualTo(418);
+    }
 }
