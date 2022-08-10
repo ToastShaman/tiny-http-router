@@ -74,7 +74,7 @@ public class RoutingTree implements RoutingTable {
         return find(matched, context, methodType, pathElements);
     }
 
-    public static class Node {
+    private static class Node {
         public final PatternElement patternElement;
         public final Map<MethodType, Route> routes = new LinkedHashMap<>();
         public final Map<PatternElement, Node> children = new LinkedHashMap<>();
