@@ -69,8 +69,7 @@ public class RoutingTree implements RoutingTable {
             return Matched(route);
         }
 
-        var matched = current.getChildOrNull(context, pathElements.peek());
-        if (matched != null) pathElements.pop();
+        var matched = current.getChildOrNull(context, pathElements.pop());
         if (matched == null) return NoMatch();
         return find(matched, context, methodType, pathElements);
     }
