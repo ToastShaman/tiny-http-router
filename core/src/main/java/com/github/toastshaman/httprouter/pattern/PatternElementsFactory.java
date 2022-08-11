@@ -1,6 +1,6 @@
 package com.github.toastshaman.httprouter.pattern;
 
-import com.github.toastshaman.httprouter.domain.PatternElement;
+import com.github.toastshaman.httprouter.domain.RoutingPatternElement;
 import com.github.toastshaman.httprouter.domain.RoutingPattern;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 public final class PatternElementsFactory {
 
-    private static final List<Function<PatternElement, MatchingPatternElement>> factories = List.of(
+    private static final List<Function<RoutingPatternElement, MatchingPatternElement>> factories = List.of(
             StaticPattern::parseOrNull,
             NamedPattern::parseOrNull,
             RegexPattern::parseOrNull

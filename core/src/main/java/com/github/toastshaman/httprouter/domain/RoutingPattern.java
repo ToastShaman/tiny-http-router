@@ -19,10 +19,10 @@ public record RoutingPattern(String value) {
         return RoutingPattern.of(value + other.value);
     }
 
-    public List<PatternElement> split() {
+    public List<RoutingPatternElement> split() {
         return Arrays.stream(value.split("/"))
                 .filter(it -> !it.isBlank())
-                .map(PatternElement::new)
+                .map(RoutingPatternElement::new)
                 .toList();
     }
 

@@ -2,7 +2,7 @@ package com.github.toastshaman.httprouter.pattern;
 
 import com.github.toastshaman.httprouter.RoutingContext;
 import com.github.toastshaman.httprouter.domain.PathElement;
-import com.github.toastshaman.httprouter.domain.PatternElement;
+import com.github.toastshaman.httprouter.domain.RoutingPatternElement;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -23,7 +23,7 @@ public record NamedPattern(String name) implements MatchingPatternElement {
 
     public static final Pattern PATTERN = Pattern.compile("^\\{([a-zA-Z0-9]+)}$");
 
-    public static NamedPattern parseOrNull(PatternElement element) {
+    public static NamedPattern parseOrNull(RoutingPatternElement element) {
         var matcher = PATTERN.matcher(element.value());
         if (matcher.find()) {
             var name = matcher.group(1);

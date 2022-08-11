@@ -2,9 +2,9 @@ package com.github.toastshaman.httprouter.domain;
 
 import java.util.Objects;
 
-public record PatternElement(String value) {
+public record RoutingPatternElement(String value) {
 
-    public PatternElement {
+    public RoutingPatternElement {
         if (Objects.requireNonNull(value).isBlank()) {
             throw new IllegalArgumentException("pattern element must not be empty");
         }
