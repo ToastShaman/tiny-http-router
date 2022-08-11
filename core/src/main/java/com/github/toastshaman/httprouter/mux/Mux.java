@@ -8,6 +8,7 @@ import com.github.toastshaman.httprouter.domain.Path;
 import com.github.toastshaman.httprouter.domain.RoutingPattern;
 import com.github.toastshaman.httprouter.routing.RoutingTree;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -109,9 +110,9 @@ public class Mux implements Router {
 
     @Override
     public Router Route(String pattern, Consumer<Router> routerFn) {
-        RoutingPattern p = RoutingPattern.of(pattern);
+        var p = RoutingPattern.of(pattern);
 
-        Mux mux = new Mux(routingTable, middlewares);
+        var mux = new Mux(routingTable, middlewares);
         routerFn.accept(mux);
 
         mux.routingTable.routes()
@@ -144,13 +145,9 @@ public class Mux implements Router {
         var matchResult = findRoute(ctx, method, path);
 
         Handler endpoint;
-        if (matchResult instanceof NoMatch) {
-            endpoint = notFoundHandler;
-        } else if (matchResult instanceof MethodNotAllowed) {
-            endpoint = methodNotAllowedHandler;
-        } else {
-            endpoint = matchResult.route().handler();
-        }
+        if (matchResult instanceof NoMatch) endpoint = notFoundHandler;
+        else if (matchResult instanceof MethodNotAllowed) endpoint = methodNotAllowedHandler;
+        else endpoint = matchResult.route().handler();
 
         responseWriter.writeHeader(200);
         endpoint.handle(responseWriter, request);
@@ -166,9 +163,10 @@ public class Mux implements Router {
             return endpoint;
         }
 
-        var handler = middlewares.get(middlewares.size() - 1).apply(endpoint);
-        for (int i = middlewares.size() - 2; i >= 0; i--) {
-            handler = middlewares.get(i).apply(handler);
+        var queue = new ArrayDeque<>(middlewares);
+        var handler = Objects.requireNonNull(queue.pollLast()).apply(endpoint);
+        while (!queue.isEmpty()) {
+            handler = queue.pollLast().apply(handler);
         }
 
         return handler;
