@@ -1,8 +1,6 @@
-package com.github.toastshaman.httprouter.servlet.jetty;
+package com.github.toastshaman.httprouter.servlet;
 
 import com.github.toastshaman.httprouter.Router;
-import com.github.toastshaman.httprouter.servlet.HttpServletRequestWrapper;
-import com.github.toastshaman.httprouter.servlet.HttpServletResponseWriter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
@@ -20,6 +18,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,10 +30,10 @@ public class JettyTest {
         var server = new EmbeddedServer().start();
 
         try {
-            var port = server.port().join();
+            var port = server.port();
             var client = HttpClient.newHttpClient();
             var request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:%d/hello/kevin".formatted(port)))
+                    .uri(URI.create("http://localhost:%d/hello/kevin?first=foo&second=bar".formatted(port)))
                     .timeout(Duration.ofSeconds(5))
                     .GET()
                     .build();
@@ -43,7 +42,10 @@ public class JettyTest {
 
             assertThat(response.body()).isEqualTo("Hello kevin");
             assertThat(response.statusCode()).isEqualTo(418);
-            assertThat(response.headers().map()).containsEntry("Content-Type", List.of("text/plain;charset=utf-8"));
+            assertThat(response.headers().map())
+                    .containsEntry("Content-Type", List.of("text/plain;charset=utf-8"))
+                    .containsEntry("first", List.of("foo"))
+                    .containsEntry("second", List.of("bar"));
         } finally {
             server.stop();
         }
@@ -51,6 +53,7 @@ public class JettyTest {
 
     public static class EmbeddedServer {
         private final Server server;
+        private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
         private final Router router = Router.newRouter()
                 .Use(next -> (w, r) -> {
@@ -58,8 +61,9 @@ public class JettyTest {
                     next.handle(w, r);
                 })
                 .Get("/hello/{name}", (w, r) -> {
-                    var name = r.context().require("name");
-                    w.write("Hello %s".formatted(name));
+                    w.write("Hello %s".formatted(r.context().require("name")));
+                    w.header().set("first", r.queryStringParameters().get("first"));
+                    w.header().set("second", r.queryStringParameters().get("second"));
                     w.writeHeader(418);
                 });
 
@@ -90,17 +94,15 @@ public class JettyTest {
             }
         }
 
-        public CompletableFuture<Integer> port() {
+        public Integer port() {
             var future = new CompletableFuture<Integer>();
-            var executor = Executors
-                    .newSingleThreadScheduledExecutor();
             executor.scheduleWithFixedDelay(() -> {
                 if (server.isStarted()) {
                     future.complete(server.getURI().getPort());
-                    executor.shutdownNow();
+                    executor.shutdown();
                 }
             }, 0, 500, MILLISECONDS);
-            return future;
+            return future.join();
         }
 
         public void stop() {
