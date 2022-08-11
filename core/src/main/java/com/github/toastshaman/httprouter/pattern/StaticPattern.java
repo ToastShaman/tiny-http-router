@@ -2,27 +2,25 @@ package com.github.toastshaman.httprouter.pattern;
 
 import com.github.toastshaman.httprouter.RoutingContext;
 import com.github.toastshaman.httprouter.domain.PathElement;
+import com.github.toastshaman.httprouter.domain.PatternElement;
 
 import java.util.Objects;
 
-public record StaticPattern(String value) implements PatternElement {
+public record StaticPattern(PatternElement element) implements MatchingPatternElement {
 
     public StaticPattern {
-        if (Objects.requireNonNull(value).isBlank()) {
-            throw new IllegalArgumentException("must not be empty");
-        }
+        Objects.requireNonNull(element);
     }
 
     @Override
     public boolean match(RoutingContext context, PathElement path) {
-        return value.equals(path.value());
+        return element.value().equals(path.value());
     }
 
-    public static StaticPattern parseOrNull(String element) {
-        if (element.matches("^[a-zA-Z0-9]+$")) {
+    public static StaticPattern parseOrNull(PatternElement element) {
+        if (element.value().matches("^[a-zA-Z0-9]+$")) {
             return new StaticPattern(element);
         }
         return null;
     }
-
 }

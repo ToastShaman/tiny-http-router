@@ -14,7 +14,7 @@ public record Path(String value) {
         }
     }
 
-    public List<PathElement> explode() {
+    public List<PathElement> split() {
         return Arrays.stream(value.split("/"))
                 .filter(it -> !it.isBlank())
                 .map(PathElement::new)

@@ -1,22 +1,26 @@
 package com.github.toastshaman.httprouter.pattern;
 
-import com.github.toastshaman.httprouter.domain.Pattern;
+import com.github.toastshaman.httprouter.domain.PatternElement;
+import com.github.toastshaman.httprouter.domain.RoutingPattern;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class PatternElementsFactory {
+public final class PatternElementsFactory {
 
-    private static final List<Function<String, PatternElement>> factories = List.of(
+    private static final List<Function<PatternElement, MatchingPatternElement>> factories = List.of(
             StaticPattern::parseOrNull,
             NamedPattern::parseOrNull,
             RegexPattern::parseOrNull
     );
 
-    public static PatternElements parse(Pattern pattern) {
-        List<PatternElement> elements = pattern
-                .explode()
+    private PatternElementsFactory() {
+    }
+
+    public static PatternElements parse(RoutingPattern pattern) {
+        var elements = pattern
+                .split()
                 .stream()
                 .flatMap(element -> factories.stream().map(it -> it.apply(element)).filter(Objects::nonNull))
                 .toList();

@@ -3,9 +3,9 @@ package com.github.toastshaman.httprouter.domain;
 import java.util.Arrays;
 import java.util.List;
 
-public record Pattern(String value) {
+public record RoutingPattern(String value) {
 
-    public Pattern {
+    public RoutingPattern {
         if (!value.startsWith("/")) {
             throw new IllegalArgumentException("routing pattern must begin with '/' in '%s'".formatted(value));
         }
@@ -15,17 +15,18 @@ public record Pattern(String value) {
         }
     }
 
-    public Pattern concat(Pattern other) {
-        return Pattern.of(value + other.value);
+    public RoutingPattern concat(RoutingPattern other) {
+        return RoutingPattern.of(value + other.value);
     }
 
-    public List<String> explode() {
+    public List<PatternElement> split() {
         return Arrays.stream(value.split("/"))
                 .filter(it -> !it.isBlank())
+                .map(PatternElement::new)
                 .toList();
     }
 
-    public static Pattern of(String pattern) {
-        return new Pattern(pattern);
+    public static RoutingPattern of(String pattern) {
+        return new RoutingPattern(pattern);
     }
 }

@@ -1,15 +1,15 @@
 package com.github.toastshaman.httprouter;
 
 import com.github.toastshaman.httprouter.domain.MethodType;
-import com.github.toastshaman.httprouter.domain.Pattern;
+import com.github.toastshaman.httprouter.domain.RoutingPattern;
 
 public interface Route {
 
     MethodType method();
 
-    Pattern pattern();
+    RoutingPattern pattern();
 
     Handler handler();
 
-    Route prefixWith(Pattern pattern);
+    Route prefixWith(RoutingPattern pattern);
 }

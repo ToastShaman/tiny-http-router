@@ -1,6 +1,7 @@
 package com.github.toastshaman.httprouter.mux;
 
-import com.github.toastshaman.httprouter.*;
+import com.github.toastshaman.httprouter.Handler;
+import com.github.toastshaman.httprouter.Router;
 import com.github.toastshaman.httprouter.domain.MethodType;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;

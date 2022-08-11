@@ -7,10 +7,10 @@ import com.github.toastshaman.httprouter.domain.PathElement;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public record PatternElements(List<PatternElement> patterns) {
+public record PatternElements(List<MatchingPatternElement> patterns) {
 
     public boolean match(RoutingContext context, Path offeredPath) {
-        List<PathElement> pathElements = offeredPath.explode();
+        List<PathElement> pathElements = offeredPath.split();
         if (pathElements.size() != patterns.size()) return false;
         return IntStream.range(0, patterns.size())
                 .mapToObj(idx -> patterns.get(idx).match(context, pathElements.get(idx)))

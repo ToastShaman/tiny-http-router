@@ -1,12 +1,11 @@
 package com.github.toastshaman.httprouter.mux;
 
 import com.github.toastshaman.httprouter.*;
-import com.github.toastshaman.httprouter.MatchResult;
 import com.github.toastshaman.httprouter.MatchResult.MethodNotAllowed;
 import com.github.toastshaman.httprouter.MatchResult.NoMatch;
 import com.github.toastshaman.httprouter.domain.MethodType;
 import com.github.toastshaman.httprouter.domain.Path;
-import com.github.toastshaman.httprouter.domain.Pattern;
+import com.github.toastshaman.httprouter.domain.RoutingPattern;
 import com.github.toastshaman.httprouter.routing.RoutingTree;
 
 import java.util.ArrayList;
@@ -56,61 +55,61 @@ public class Mux implements Router {
 
     @Override
     public Router Connect(String pattern, Handler handler) {
-        insertRoute(CONNECT, Pattern.of(pattern), handler);
+        insertRoute(CONNECT, RoutingPattern.of(pattern), handler);
         return this;
     }
 
     @Override
     public Router Delete(String pattern, Handler handler) {
-        insertRoute(DELETE, Pattern.of(pattern), handler);
+        insertRoute(DELETE, RoutingPattern.of(pattern), handler);
         return this;
     }
 
     @Override
     public Router Get(String pattern, Handler handler) {
-        insertRoute(GET, Pattern.of(pattern), handler);
+        insertRoute(GET, RoutingPattern.of(pattern), handler);
         return this;
     }
 
     @Override
     public Router Head(String pattern, Handler handler) {
-        insertRoute(HEAD, Pattern.of(pattern), handler);
+        insertRoute(HEAD, RoutingPattern.of(pattern), handler);
         return this;
     }
 
     @Override
     public Router Options(String pattern, Handler handler) {
-        insertRoute(OPTIONS, Pattern.of(pattern), handler);
+        insertRoute(OPTIONS, RoutingPattern.of(pattern), handler);
         return this;
     }
 
     @Override
     public Router Patch(String pattern, Handler handler) {
-        insertRoute(PATCH, Pattern.of(pattern), handler);
+        insertRoute(PATCH, RoutingPattern.of(pattern), handler);
         return this;
     }
 
     @Override
     public Router Post(String pattern, Handler handler) {
-        insertRoute(POST, Pattern.of(pattern), handler);
+        insertRoute(POST, RoutingPattern.of(pattern), handler);
         return this;
     }
 
     @Override
     public Router Put(String pattern, Handler handler) {
-        insertRoute(PUT, Pattern.of(pattern), handler);
+        insertRoute(PUT, RoutingPattern.of(pattern), handler);
         return this;
     }
 
     @Override
     public Router Trace(String pattern, Handler handler) {
-        insertRoute(TRACE, Pattern.of(pattern), handler);
+        insertRoute(TRACE, RoutingPattern.of(pattern), handler);
         return this;
     }
 
     @Override
     public Router Route(String pattern, Consumer<Router> routerFn) {
-        Pattern p = Pattern.of(pattern);
+        RoutingPattern p = RoutingPattern.of(pattern);
 
         Mux mux = new Mux(routingTable, middlewares);
         routerFn.accept(mux);
@@ -157,7 +156,7 @@ public class Mux implements Router {
         endpoint.handle(responseWriter, request);
     }
 
-    private void insertRoute(MethodType method, Pattern pattern, Handler handler) {
+    private void insertRoute(MethodType method, RoutingPattern pattern, Handler handler) {
         routingTable.insert(new SimpleRoute(method, pattern, chain(handler)));
     }
 

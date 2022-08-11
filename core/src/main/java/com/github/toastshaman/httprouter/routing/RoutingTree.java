@@ -4,8 +4,11 @@ import com.github.toastshaman.httprouter.MatchResult;
 import com.github.toastshaman.httprouter.Route;
 import com.github.toastshaman.httprouter.RoutingContext;
 import com.github.toastshaman.httprouter.RoutingTable;
-import com.github.toastshaman.httprouter.domain.*;
-import com.github.toastshaman.httprouter.pattern.PatternElement;
+import com.github.toastshaman.httprouter.domain.MethodType;
+import com.github.toastshaman.httprouter.domain.Path;
+import com.github.toastshaman.httprouter.domain.PathElement;
+import com.github.toastshaman.httprouter.domain.RoutingPattern;
+import com.github.toastshaman.httprouter.pattern.MatchingPatternElement;
 import com.github.toastshaman.httprouter.pattern.PatternElements;
 import com.github.toastshaman.httprouter.pattern.PatternElementsFactory;
 
@@ -17,14 +20,14 @@ import static com.github.toastshaman.httprouter.MatchResult.*;
 public class RoutingTree implements RoutingTable {
 
     private final Node root = new Node(null);
-    private final Function<Pattern, PatternElements> patternFactory;
+    private final Function<RoutingPattern, PatternElements> patternFactory;
     private final List<Route> allRoutes = new ArrayList<>();
 
     public RoutingTree() {
         this(PatternElementsFactory::parse);
     }
 
-    public RoutingTree(Function<Pattern, PatternElements> factory) {
+    public RoutingTree(Function<RoutingPattern, PatternElements> factory) {
         this.patternFactory = factory;
     }
 
@@ -43,7 +46,7 @@ public class RoutingTree implements RoutingTable {
 
     private void insert(Node current,
                         Route route,
-                        Deque<PatternElement> elements) {
+                        Deque<MatchingPatternElement> elements) {
         if (elements.isEmpty()) {
             current.addRoute(route);
             return;
@@ -55,7 +58,7 @@ public class RoutingTree implements RoutingTable {
     public MatchResult find(RoutingContext context,
                             MethodType method,
                             Path path) {
-        var pathElements = new ArrayDeque<>(path.explode());
+        var pathElements = new ArrayDeque<>(path.split());
         return find(root, context, method, pathElements);
     }
 
@@ -75,12 +78,12 @@ public class RoutingTree implements RoutingTable {
     }
 
     private static class Node {
-        public final PatternElement patternElement;
+        public final MatchingPatternElement patternElement;
         public final Map<MethodType, Route> routes = new LinkedHashMap<>();
-        public final Map<PatternElement, Node> children = new LinkedHashMap<>();
+        public final Map<MatchingPatternElement, Node> children = new LinkedHashMap<>();
         public Node parent = null;
 
-        public Node(PatternElement patternElement) {
+        public Node(MatchingPatternElement patternElement) {
             this.patternElement = patternElement;
         }
 

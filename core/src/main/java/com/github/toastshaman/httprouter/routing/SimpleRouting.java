@@ -1,12 +1,12 @@
 package com.github.toastshaman.httprouter.routing;
 
+import com.github.toastshaman.httprouter.MatchResult;
 import com.github.toastshaman.httprouter.Route;
 import com.github.toastshaman.httprouter.RoutingContext;
 import com.github.toastshaman.httprouter.RoutingTable;
-import com.github.toastshaman.httprouter.MatchResult;
 import com.github.toastshaman.httprouter.domain.MethodType;
 import com.github.toastshaman.httprouter.domain.Path;
-import com.github.toastshaman.httprouter.domain.Pattern;
+import com.github.toastshaman.httprouter.domain.RoutingPattern;
 import com.github.toastshaman.httprouter.pattern.PatternElements;
 import com.github.toastshaman.httprouter.pattern.PatternElementsFactory;
 
@@ -19,14 +19,14 @@ import static com.github.toastshaman.httprouter.MatchResult.*;
 
 public class SimpleRouting implements RoutingTable {
 
-    private final Function<Pattern, PatternElements> patternFactory;
+    private final Function<RoutingPattern, PatternElements> patternFactory;
     private final List<Tuple<Route, PatternElements>> routes = new ArrayList<>();
 
     public SimpleRouting() {
         this(PatternElementsFactory::parse);
     }
 
-    public SimpleRouting(Function<Pattern, PatternElements> factory) {
+    public SimpleRouting(Function<RoutingPattern, PatternElements> factory) {
         this.patternFactory = factory;
     }
 

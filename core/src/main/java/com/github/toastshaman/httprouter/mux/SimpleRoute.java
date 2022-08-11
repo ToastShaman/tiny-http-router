@@ -3,13 +3,13 @@ package com.github.toastshaman.httprouter.mux;
 import com.github.toastshaman.httprouter.Handler;
 import com.github.toastshaman.httprouter.Route;
 import com.github.toastshaman.httprouter.domain.MethodType;
-import com.github.toastshaman.httprouter.domain.Pattern;
+import com.github.toastshaman.httprouter.domain.RoutingPattern;
 
 import java.util.Objects;
 
 public record SimpleRoute(
         MethodType method,
-        Pattern pattern,
+        RoutingPattern pattern,
         Handler handler
 ) implements Route {
     public SimpleRoute {
@@ -18,7 +18,7 @@ public record SimpleRoute(
         Objects.requireNonNull(handler);
     }
 
-    public SimpleRoute prefixWith(Pattern pattern) {
+    public SimpleRoute prefixWith(RoutingPattern pattern) {
         return new SimpleRoute(method(), pattern.concat(pattern()), handler());
     }
 }
