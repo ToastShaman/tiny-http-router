@@ -21,7 +21,7 @@ public record NamedPattern(String name) implements MatchingPatternElement {
         return true;
     }
 
-    public static final Pattern PATTERN = Pattern.compile("^\\{([a-zA-Z0-9]+)}$");
+    private static final Pattern PATTERN = Pattern.compile("^\\{([a-zA-Z0-9\\-_.]+)}$");
 
     public static NamedPattern parseOrNull(RoutingPatternElement element) {
         var matcher = PATTERN.matcher(element.value());

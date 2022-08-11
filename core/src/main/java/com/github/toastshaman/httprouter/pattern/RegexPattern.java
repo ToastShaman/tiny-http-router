@@ -26,7 +26,7 @@ public record RegexPattern(String name, Pattern pattern) implements MatchingPatt
         return false;
     }
 
-    public static final Pattern PATTERN = Pattern.compile("^\\{([a-zA-Z0-9]+):([^}].+)}$");
+    private static final Pattern PATTERN = Pattern.compile("^\\{([a-zA-Z0-9\\-_.]+):([^}].+)}$");
 
     public static RegexPattern parseOrNull(RoutingPatternElement element) {
         var matcher = PATTERN.matcher(element.value());
